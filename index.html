@@ -1,0 +1,2394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executives</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg: #F3FAF9;
+  --bg-elev: #E7F5F3;
+  --card: linear-gradient(160deg, #FFFFFF 0%, #F7FCFB 100%);
+  --card-solid: #FFFFFF;
+  --card-border: rgba(15,60,55,0.10);
+  --text: #0F2B28;
+  --muted: #5E7A76;
+
+  /* Primary brand color is teal, matching the reference site. Gold and
+     violet remain as secondary accents to keep Core Team/Volunteers
+     visually distinct, but teal now leads everywhere (tabs, buttons,
+     Coordinators). */
+  --teal: #0E8074;
+  --teal-dark: #0A5F56;
+  --teal-soft: rgba(14,128,116,0.10);
+  --gold: #C08A2E;
+  --gold-soft: rgba(192,138,46,0.12);
+  --violet: #6F63B8;
+  --violet-soft: rgba(111,99,184,0.12);
+  --rose: #C2577B;
+  --rose-soft: rgba(194,87,123,0.12);
+  --emerald: #0E8074;
+  --emerald-soft: rgba(14,128,116,0.10);
+
+  --shadow-sm: 0 4px 16px rgba(10,60,55,0.06);
+  --shadow-lg: 0 24px 56px rgba(10,60,55,0.14);
+
+  /* ============================================================
+     PHOTO TOKENS — the single control point for every card photo,
+     in every group (Coordinators / Core Team / Volunteers) and
+     every year's list (2015–2026). Change a value here once and
+     it updates everywhere; nothing below this block sets photo
+     size/margin/padding/radius directly.
+     ============================================================ */
+  --photo-size: 112px;          /* photo box width, regular grid */
+  --photo-size-compact: 104px;  /* photo box width, .grid-compact (volunteers) */
+  --photo-margin: 8px;          /* space around the photo inside the card */
+  --photo-padding: 6px;         /* space between the photo box edge and the image */
+  --photo-radius: 12px;         /* corner rounding of the photo image */
+  --photo-zoom: 1.15;           /* scales the image up to crop out white/blank
+                                    borders baked into some source photos —
+                                    this is a zoom, not spacing, so margin/
+                                    padding above are untouched by it */
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Soft drifting glow blobs, layered behind the particle canvas for depth
+   (like the hazy color glow behind the hero text in the reference image). */
+body::before, body::after{
+  content:"";
+  position: fixed;
+  z-index: -2;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+}
+body::before{
+  top: -10%;
+  left: -8%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(156,143,217,0.20), transparent 70%);
+  animation: blobFloatA 26s ease-in-out infinite alternate;
+}
+body::after{
+  bottom: -12%;
+  right: -8%;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(79,191,159,0.16), transparent 70%);
+  animation: blobFloatB 30s ease-in-out infinite alternate;
+}
+@keyframes blobFloatA{
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(6vw, 8vh) scale(1.12); }
+}
+@keyframes blobFloatB{
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-7vw, -6vh) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce){
+  body::before, body::after{ animation: none; }
+}
+
+/* Ambient background glow — pure CSS, GPU-composited (transform/opacity
+   only), no JS animation loop. This replaces what used to be a canvas
+   particle effect, which was costing real CPU every frame. */
+.wrap{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px 100px;
+  position: relative;
+}
+
+/* ---------- Cover banner ---------- */
+.cover-banner{
+  position: relative;
+  overflow: hidden;
+  line-height: 0;
+  background: linear-gradient(160deg, var(--bg-elev), var(--bg));
+}
+.cover-banner img{
+  width: 100%;
+  height: auto; /* natural size — shows the FULL photo, no cropping, no forced box */
+  display: block;
+  transition: opacity 0.6s ease;
+}
+.cover-banner::after{
+  content:"";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(12,11,18,0) 60%, var(--bg) 100%);
+}
+
+/* Cover text now sits BELOW the photo, in its own calm section */
+.cover-text{
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 44px 24px 8px;
+}
+.cover-eyebrow{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: var(--teal-soft);
+  border: 1px solid rgba(14,128,116,0.3);
+  padding: 7px 18px;
+  border-radius: 999px;
+  margin: 0 0 20px;
+  box-shadow: 0 0 24px rgba(14,128,116,0.14);
+}
+.cover-title{
+  font-family: 'Fraunces', serif;
+  font-size: clamp(30px, 4.5vw, 44px);
+  font-weight: 600;
+  background: linear-gradient(120deg, var(--text) 40%, var(--teal) 70%, var(--text) 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0 0 14px;
+  letter-spacing: -0.01em;
+  animation: shimmerTitle 8s ease-in-out infinite;
+}
+@keyframes shimmerTitle{
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+@media (prefers-reduced-motion: reduce){
+  .cover-title{ animation: none; }
+}
+.cover-subtitle{
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Page header */
+.page-head{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 0 40px;
+  margin-bottom: 8px;
+}
+.page-head::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(420px, 70%);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--teal) 50%, transparent);
+  opacity: 0.7;
+}
+.year-tabs{
+  display: flex;
+  gap: 4px;
+  background: var(--bg-elev);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 5px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.year-tabs::-webkit-scrollbar{ display: none; }
+.year-tab{
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 9px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.2s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+.year-tab:hover{ color: var(--text); }
+.year-tab.active{
+  background: linear-gradient(120deg, var(--teal), var(--teal-dark));
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(14,128,116,0.32);
+  animation: tabPulse 3s ease-in-out infinite;
+}
+@keyframes tabPulse{
+  0%, 100% { box-shadow: 0 4px 16px rgba(14,128,116,0.32); }
+  50% { box-shadow: 0 4px 24px rgba(14,128,116,0.48); }
+}
+@media (prefers-reduced-motion: reduce){
+  .year-tab.active{ animation: none; }
+}
+
+/* Section heading */
+.section-heading{
+  display:flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 26px;
+}
+.section-heading .icon-chip{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.section-heading svg{ width: 22px; height: 22px; flex-shrink: 0; }
+.section-heading h2{
+  font-family: 'Fraunces', serif;
+  font-size: 23px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+.section-heading .count{
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--bg-elev);
+  border: 1px solid var(--card-border);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.section-heading .rule{
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--card-border), transparent);
+}
+section.group{ margin-bottom: 56px; }
+section.group.fade-in{ animation: fadeUp 0.45s ease both; }
+
+/* Single teal brand color throughout, matching the reference site */
+.section-heading .icon-chip{ background: var(--teal-soft); border: 1px solid rgba(14,128,116,0.25); }
+.section-heading svg{ color: var(--teal); }
+
+.card[data-group] .card-name-row svg{ color: var(--teal); }
+.card:hover{ border-color: rgba(14,128,116,0.35); }
+.card .card-role{ color: var(--teal-dark); }
+
+/* Grid */
+.grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.grid.grid-compact{
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* Card — compact horizontal: photo on the right, name/role on the left */
+.card{
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  height: 108px;
+  background: var(--card-solid);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transform-style: preserve-3d;
+  transition: border-color 0.2s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  will-change: transform;
+}
+.card:hover, .card:focus-visible{
+  outline: none;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+/* 3D tilt glare — a soft light sweep that follows the cursor, driven by
+   --tilt-mx/--tilt-my/--glare-opacity set from JS (see the tilt handler
+   near the end of the script). Purely decorative; sits above the card's
+   content but ignores clicks. */
+.card::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--tilt-mx, 50%) var(--tilt-my, 50%), rgba(255,255,255,0.5), transparent 55%);
+  opacity: var(--glare-opacity, 0);
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+/* Row-rotation animation for the Volunteers & Mentors grid — driven from
+   JS (rotateVolunteersRow) using the FLIP technique, so cards glide
+   smoothly to their new grid position rather than fading in/out. The
+   transform/transition are set inline per-card at animation time; no
+   dedicated classes are needed here. */
+
+/* Gentle glow pulse on the Volunteers & Mentors heading while it rotates,
+   so the change reads as a deliberate flourish rather than a glitch. */
+@keyframes headingShuffleGlow{
+  0%, 100%{ text-shadow: none; }
+  50%{ text-shadow: 0 0 14px rgba(20,166,150,0.45); }
+}
+.section-heading.volunteers.is-shuffling h2{ animation: headingShuffleGlow 0.9s ease; }
+
+.card-info{
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  flex: 1;
+}
+.card-name-row{
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.card-name-row svg{ width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
+.card-name{
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.card-role{
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--muted);
+}
+
+/* Photo box: size/margin/padding all come from the tokens in :root —
+   see "PHOTO TOKENS" above. Nothing here is a hardcoded number. */
+.card-photo{
+  flex-shrink: 0;
+  width: var(--photo-size);
+  align-self: stretch;
+  margin: var(--photo-margin);
+  padding: var(--photo-padding);
+  overflow: hidden; /* clips the zoomed image at this box's edge */
+  position: relative;
+}
+.card-photo img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%; /* keeps the face in frame instead of a plain center crop */
+  display: block;
+  border-radius: var(--photo-radius);
+  transform: scale(var(--photo-zoom)); /* crops out white/blank borders baked into the source photo */
+  transform-origin: center;
+}
+
+/* Compact volunteer cards: only the photo width token changes */
+.grid-compact .card-photo{ width: var(--photo-size-compact); }
+.grid-compact .card-info{ padding: 14px 12px; }
+.grid-compact .card-name{ font-size: 13.5px; }
+.grid-compact .card-role{ font-size: 10.5px; }
+
+@keyframes fadeUp{
+  from{ opacity: 0; transform: translateY(8px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Modal ---------- */
+.modal-overlay{
+  position: fixed; inset: 0;
+  background: rgba(10,14,13,0.55);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.modal-overlay.open{ opacity: 1; pointer-events: auto; }
+
+.modal{
+  background: var(--card-solid);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 84vh;
+  overflow-y: auto;
+  box-shadow: 0 30px 70px rgba(15,40,37,0.22), 0 4px 16px rgba(15,40,37,0.10);
+  transform: translateY(18px) scale(0.97);
+  transition: transform 0.28s cubic-bezier(.2,.8,.2,1), opacity 0.25s ease;
+}
+.modal-overlay.open .modal{ transform: translateY(0) scale(1); }
+
+.modal-photo-banner{
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 320px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-elev);
+  border-radius: 22px 22px 0 0;
+}
+.modal-photo-banner img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: none !important; /* guards against any inherited rotate/flip from outside CSS */
+}
+.modal-photo-banner::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(15,23,42,0.06) 100%);
+  pointer-events: none;
+}
+
+.modal-close{
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 2px 8px rgba(15,23,42,0.15);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  z-index: 2;
+  display:flex; align-items:center; justify-content:center;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.modal-close:hover{ color: var(--teal); transform: rotate(90deg); }
+
+.modal-head{
+  padding: 22px 28px 24px;
+  text-align: center;
+  position: relative;
+  background: var(--card-solid);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.modal-head h3{
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.modal-head .current-role{
+  display: inline-block;
+  font-family: 'Manrope', sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--teal-dark);
+  background: var(--teal-soft);
+  border: 1px solid rgba(184,134,11,0.18);
+  padding: 5px 13px;
+  border-radius: 999px;
+  margin: 0;
+}
+/* Info cards — a stack of individually elevated cards (not one merged
+   panel with divider lines), so university, phone, email and address
+   each read as their own attractive card. Each gets a distinct icon
+   color from the site's brand palette, and lifts slightly on hover like
+   the member cards do. */
+.modal-info-card{
+  margin: 16px auto 0;
+  max-width: 320px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.modal-info-card .info-row{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card-solid);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.modal-info-card .info-row:hover{
+  transform: translateX(3px);
+  box-shadow: var(--shadow-lg);
+}
+.modal-info-card .info-row:empty,
+.modal-info-card .info-row[hidden]{ display: none; }
+.modal-info-card .info-icon{
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: var(--info-accent-soft, var(--teal-soft));
+  color: var(--info-accent, var(--teal-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-info-card .info-icon svg{ width: 14px; height: 14px; }
+.modal-info-card .info-text{
+  font-family: 'Manrope', sans-serif;
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.5;
+  padding-top: 5px;
+  word-break: break-word;
+}
+.modal-info-card .info-text a{
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--violet);
+}
+.modal-info-card .info-text a:hover{
+  color: var(--violet);
+  border-bottom-style: solid;
+}
+.id-card-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px auto 0;
+  max-width: 320px;
+  width: 100%;
+  padding: 11px 16px;
+  background: linear-gradient(120deg, var(--teal), var(--teal-dark));
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.id-card-btn:hover{ transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.id-card-btn svg{ width: 16px; height: 16px; flex-shrink: 0; }
+#rowInstitution{ --info-accent: var(--teal-dark); --info-accent-soft: var(--teal-soft); }
+#rowPhone{ --info-accent: var(--gold); --info-accent-soft: var(--gold-soft); }
+#rowEmail{ --info-accent: var(--violet); --info-accent-soft: var(--violet-soft); }
+#rowAddress{ --info-accent: var(--rose); --info-accent-soft: var(--rose-soft); }
+
+.modal-body{ padding: 26px 28px 32px; }
+.modal-body h4{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+.modal-body h4::after{
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--card-border);
+}
+
+.timeline{ position: relative; padding-left: 26px; }
+.timeline::before{
+  content:"";
+  position:absolute; left: 9px; top: 4px; bottom: 4px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--teal), var(--teal-dark));
+  opacity: 0.3;
+  border-radius: 2px;
+}
+.t-item{ position: relative; padding-bottom: 14px; }
+.t-item:last-child{ padding-bottom: 0; }
+.t-item::before{
+  content:"";
+  position:absolute; left: -25px; top: 14px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--card-solid);
+  border: 2.5px solid var(--teal);
+  box-shadow: 0 0 0 4px var(--bg);
+  z-index: 1;
+}
+.t-item.current::before{
+  background: var(--teal);
+  box-shadow: 0 0 0 4px var(--bg), 0 0 0 7px var(--teal-soft);
+}
+
+/* Plain stacked text per entry — no card/box around it. Year and group
+   label still pick up the group's accent color (teal / gold / violet,
+   set via --t-accent from JS) so entries stay visually distinguishable
+   without being boxed. */
+.t-card{ display: block; }
+.t-year-badge{
+  display: block;
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--t-accent, var(--text));
+  margin: 0 0 2px;
+}
+.t-card-text{ min-width: 0; }
+.t-role{ font-family: 'Fraunces', serif; font-size: 14px; color: var(--text); margin: 0 0 2px; }
+.t-group{ font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 700; color: var(--t-accent, var(--teal-dark)); text-transform: uppercase; letter-spacing: 0.04em; }
+
+@media (max-width: 900px){
+  .grid{ grid-template-columns: repeat(2, 1fr); }
+  .grid.grid-compact{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px){
+  :root{ --photo-size: 112px; }
+  .wrap{ padding: 0 18px 64px; }
+  .grid, .grid.grid-compact{ grid-template-columns: 1fr; gap: 14px; }
+  .page-head{ padding: 20px 0 32px; }
+  .year-tabs{ width: 100%; }
+  .card-info{ padding: 16px 14px; }
+  .modal-head{ padding: 26px 20px 18px; }
+  .modal-body{ padding: 20px 20px 26px; }
+}
+@media (max-width: 380px){
+  :root{ --photo-size: 92px; --photo-size-compact: 76px; }
+  .card{ height: 118px; }
+  .card-name{ font-size: 14px; }
+  .card-role{ font-size: 10px; }
+  .modal{ max-width: 100%; }
+  .modal-photo-banner{ max-height: 260px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .card, .year-tab, .modal, .modal-overlay{ transition: none; animation: none; }
+  .section-heading.volunteers.is-shuffling h2{ animation: none; }
+  .card::after{ display: none; }
+}
+
+</style>
+</head>
+<body>
+
+
+<!-- Cover banner photo. To swap it later, just replace this src with a
+     WordPress Media Library URL — no need to touch the CSS. -->
+<!-- Cover banner. Currently a plain CSS gradient (fast, cacheable, zero
+     bytes) instead of an embedded photo. To use a real photo: upload it
+     to your WordPress Media Library and add
+     <img src="YOUR_URL" alt="Team group photo"> inside this div — do
+     NOT paste a base64 data: URL here, that's what was slowing the page
+     down before (it added ~290KB of un-cacheable inline text). -->
+<div class="cover-banner"><img id="coverImg" alt="Cover photo"></div>
+
+<div class="cover-text">
+  <p class="cover-eyebrow">Our People</p>
+  <h2 class="cover-title">The Executive Team</h2>
+  <p class="cover-subtitle">Coordinators, Team Leader, and the volunteers who make it happen.</p>
+</div>
+
+<div class="wrap">
+  <div class="page-head">
+    <div class="year-tabs" id="yearTabs"></div>
+  </div>
+
+  <div id="content"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    <div class="modal-photo-banner"><img id="modalAvatar" src="" alt=""></div>
+    <div class="modal-head">
+      <h3 id="modalName"></h3>
+      <p class="current-role" id="modalCurrentRole"></p>
+      <div class="modal-info-card" id="modalInfoCard">
+        <div class="info-row" id="rowInstitution"><span class="info-icon"></span><span class="info-text" id="modalInstitution"></span></div>
+        <div class="info-row" id="rowPhone"><span class="info-icon"></span><span class="info-text" id="modalPhone"></span></div>
+        <div class="info-row" id="rowEmail"><span class="info-icon"></span><span class="info-text" id="modalEmail"></span></div>
+        <div class="info-row" id="rowAddress"><span class="info-icon"></span><span class="info-text" id="modalAddress"></span></div>
+      </div>
+      <button class="id-card-btn" id="downloadIdCardBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m0 0-4.5-4.5M12 16l4.5-4.5"/><path d="M4 18v1.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V18"/></svg>
+        Download ID Card
+      </button>
+    </div>
+    <div class="modal-body">
+      <h4>// Full history</h4>
+      <div class="timeline" id="modalTimeline"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------------------------------------------------------
+     Replace the PEOPLE array with your real club data.
+     - `phone`: their phone number (any format — digits are matched
+        after stripping spaces/dashes). This is the safest way to
+        identify "is this the same person as last year?" since two
+        different people can share a name, but not a phone number.
+        If two entries anywhere in this file have the same phone
+        number, they're automatically merged into ONE person with a
+        combined multi-year history — even if you used different
+        ids or slightly different name spelling for each entry.
+     - `photo`: URL to their photo (upload to your WordPress Media
+        Library and paste the image URL here).
+     - `history`: every year + role + group this person has held.
+        Year tabs and the "full history" modal are generated from
+        this automatically.
+  ----------------------------------------------------------------*/
+  const YEAR_RANGE = { start: 2015, end: 2026 }; // shows tabs for every year in this range
+
+  const PEOPLE = [];
+  const PHONE_INDEX = {}; // normalized phone -> person id, used to auto-merge duplicates
+
+  function normalizePhone(phone){
+    if(!phone) return null;
+    const digits = String(phone).replace(/[^0-9]/g, '');
+    return digits.length ? digits : null;
+  }
+
+  // Generates a colored initials avatar entirely locally (no network
+  // request) — this is what fixes broken/slow-loading photos. Real
+  // people without an uploaded photo yet get one of these instead of
+  // depending on an external image service, which can be slow, get
+  // blocked, or fail on the live site.
+  const AVATAR_COLORS = ['D4AF37', 'A78BFA', '34D399', 'E08E45', '6FA8DC'];
+  function localAvatar(name, seed){
+    const initials = name.trim().split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '?';
+    const color = AVATAR_COLORS[seed % AVATAR_COLORS.length];
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='#${color}'/><text x='50' y='58' font-family='Manrope,Arial,sans-serif' font-size='36' font-weight='700' fill='#0B0A12' text-anchor='middle'>${initials}</text></svg>`;
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+  }
+  window.__avatarFallback = localAvatar;
+
+  // Adds one history entry to a person, creating their record on first use.
+  // If `phone` matches a phone already seen elsewhere, this reuses THAT
+  // person's record instead of `id` — so the same real person's history
+  // stays linked together even if entered under a different id/list.
+  function upsertPerson(id, name, photo, entry, phone, institution, department){
+    const normPhone = normalizePhone(phone);
+    if(normPhone && PHONE_INDEX[normPhone]){
+      id = PHONE_INDEX[normPhone];
+    }
+    let existing = PEOPLE.find(p => p.id === id);
+    if(!existing){
+      const seed = PEOPLE.length;
+      const resolvedPhoto = photo || localAvatar(name, seed);
+      existing = { id, name, photo: resolvedPhoto, avatarSeed: seed, phone: phone || null, institution: institution || null, department: department || null, history: [] };
+      PEOPLE.push(existing);
+    } else {
+      if(phone && !existing.phone) existing.phone = phone;
+      if(institution && !existing.institution) existing.institution = institution;
+      if(department && !existing.department) existing.department = department;
+      // A real photo arriving later (e.g. added after the person already
+      // exists from an earlier year) replaces the local placeholder avatar.
+      if(photo && existing.photo && existing.photo.startsWith('data:image/svg')){
+        existing.photo = photo;
+      }
+    }
+    if(normPhone) PHONE_INDEX[normPhone] = existing.id;
+    existing.history.push(entry);
+    return existing;
+  }
+
+  // Sets contact info on an already-created person without adding a new
+  // history entry — for people whose phone/university arrived separately
+  // from their role data (e.g. a contact list for people already entered
+  // above as coordinators/leaders).
+  function setContactInfo(id, phone, institution){
+    const person = PEOPLE.find(x => x.id === id);
+    if(!person) return;
+    const normPhone = normalizePhone(phone);
+    if(phone){ person.phone = phone; if(normPhone) PHONE_INDEX[normPhone] = person.id; }
+    if(institution) person.institution = institution;
+  }
+
+  // Sets a person's department/major, independent of their institution —
+  // for cases where department info arrives from a different source
+  // (e.g. an application form) than the phone/university did.
+  function setDepartment(id, department){
+    const person = PEOPLE.find(x => x.id === id);
+    if(!person || !department) return;
+    person.department = department;
+  }
+
+  // Fixes a name's spelling/capitalization on an existing record (e.g.
+  // "farzana akter lima" -> "Farzana Akter Lima") without touching
+  // anything else about that person.
+  function renamePerson(id, correctedName){
+    const person = PEOPLE.find(x => x.id === id);
+    if(!person || !correctedName) return;
+    person.name = correctedName;
+  }
+
+  // Sets email / present address / permanent address on an already-created
+  // person, without touching their history — same pattern as
+  // setContactInfo/setDepartment, for info that arrives from a separate
+  // source (here: the full volunteer application export).
+  function setPersonalInfo(id, email, presentAddress, permanentAddress){
+    const person = PEOPLE.find(x => x.id === id);
+    if(!person) return;
+    if(email) person.email = email;
+    if(presentAddress) person.presentAddress = presentAddress;
+    if(permanentAddress) person.permanentAddress = permanentAddress;
+  }
+
+  // Updates an existing history entry for a given year (e.g. promoting
+  // someone from "Volunteer" to "Core Volunteer" for a year they already
+  // have on record) instead of pushing a second, duplicate entry for
+  // that same year.
+  function setRoleForYear(id, year, role, group){
+    const person = PEOPLE.find(x => x.id === id);
+    if(!person) return;
+    const entry = person.history.find(h => h.year === year);
+    if(entry){
+      entry.role = role;
+      if(group) entry.group = group;
+    }
+  }
+
+  // Removes a single year's entry from a person's history (e.g. they
+  // shouldn't be shown for a year they were previously added to).
+  function removeYearEntry(id, year){
+    const person = PEOPLE.find(x => x.id === id);
+    if(!person) return;
+    person.history = person.history.filter(h => h.year !== year);
+  }
+
+  // Sets a real photo on an already-created person, without touching their
+  // history. Pass a direct image URL (e.g. a WordPress Media Library URL,
+  // or a Google Drive "uc?export=view&id=..." link for a file shared as
+  // "Anyone with the link can view"). Drive links can be unreliable for
+  // hotlinking — the onerror handler on each <img> falls back to the
+  // local initials avatar automatically if this fails to load.
+  function setPhoto(id, url){
+    const person = PEOPLE.find(x => x.id === id);
+    if(!person || !url) return;
+    person.photo = url;
+  }
+
+  // Merges two person records that turned out to be the same real person
+  // (e.g. their name was entered separately in two different years' lists
+  // with no phone number to auto-link them). Keeps `keepId`'s record,
+  // moves any history years `removeId` has that `keepId` doesn't, then
+  // removes the now-redundant duplicate entirely.
+  function mergeDuplicate(keepId, removeId){
+    const keep = PEOPLE.find(p => p.id === keepId);
+    const remove = PEOPLE.find(p => p.id === removeId);
+    if(!keep || !remove) return;
+    remove.history.forEach(h => {
+      if(!keep.history.some(kh => kh.year === h.year)) keep.history.push(h);
+    });
+    if(!keep.phone && remove.phone) keep.phone = remove.phone;
+    if(!keep.institution && remove.institution) keep.institution = remove.institution;
+    const idx = PEOPLE.indexOf(remove);
+    if(idx !== -1) PEOPLE.splice(idx, 1);
+  }
+
+  // Coordinators + Team Leader: same 4 people, repeated for every year 2015–2026.
+  // Add a real `phone` to each once you have it — that's what guarantees
+  // their multi-year history stays correctly linked even if their name
+  // is ever spelled differently in a future year's list.
+  // Coordinators section now shows only Munir Hasan, Farseem, and Mahmud
+  // Mim — their full-history blocks are defined further below.
+
+  // Real 2025 people who aren't part of the 3-person Coordinators roster
+  // (Mursaline is Core Team, not Coordinators)
+  upsertPerson("lead-mursaline", "Md Mursaline Parvez", "", { year: 2025, role: "Executive", group: "core_team" });
+
+  // Md Mursaline Parvez was also a 2023 Volunteer before becoming 2025 Team
+  // Leader — linked here via the same "lead-mursaline" id used above.
+  upsertPerson("lead-mursaline", "Md Mursaline Parvez", "", { year: 2023, role: "Volunteer", group: "volunteers" });
+
+  const SPSB_FULL = "Society for the Popularization of Science, Bangladesh (SPSB)";
+
+  // Munir Hasan — President, SPSB. Same position every year 2015–2026.
+  for(let year = YEAR_RANGE.start; year <= YEAR_RANGE.end; year++){
+    upsertPerson("coord-munir-hasan", "Munir Hasan", "", { year, role: "President, SPSB", group: "coordinators" });
+  }
+  setContactInfo("coord-munir-hasan", "", SPSB_FULL);
+  setPhoto("coord-munir-hasan", "https://drive.google.com/thumbnail?id=1hpsFRz85BRz2TTttxCzVxtbiQhn4I_I7&sz=w1000");
+
+  // Group photo used as the top-of-page cover banner.
+  // Cover photo rotates automatically — a new photo fades in every 3
+  // seconds, cycling through this list and looping back to the start.
+  const COVER_PHOTOS = [
+    "https://drive.google.com/thumbnail?id=1nsmMPMA56WkbkN8lyldkj4rju1EU2rp6&sz=w1600",
+    "https://drive.google.com/thumbnail?id=1Xf8jAXWujeJgf6yUyhD9rXLiG-j-fQX3&sz=w1600",
+    "https://drive.google.com/thumbnail?id=1xi14_a72ILuPzcOBlSQRtHITBLaZ2ovi&sz=w1600",
+    "https://drive.google.com/thumbnail?id=1GuRzLXbFK92cGoQtOnaDS7YHbrQT3wf9&sz=w1600",
+    "https://drive.google.com/thumbnail?id=1RgeujegMcoa0Y_mO04TNsJhk8bER-Kvf&sz=w1600",
+    "https://drive.google.com/thumbnail?id=1NZy7Lpdo1dg7Xa-6TIsJFyi36lASKJT1&sz=w1600",
+    "https://drive.google.com/thumbnail?id=1Eqo4qnUywcqaSNA08c2qPGtFQN7qoSpU&sz=w1600"
+  ];
+
+  // Farseem Mannan Mohammady — VP of SPSB & Country Coordinator of bdjso,
+  // same combined position every year 2015–2026.
+  for(let year = YEAR_RANGE.start; year <= YEAR_RANGE.end; year++){
+    upsertPerson("lead-farseem", "Farseem Mannan Mohammady", "", { year, role: "General Secretary, SPSB and Country Coordinator, IJSO", group: "coordinators" });
+  }
+  setContactInfo("lead-farseem", "", SPSB_FULL);
+  setPhoto("lead-farseem", "https://drive.google.com/thumbnail?id=1S2A6zpfgZsz4YgytPqocO2jwJ8GE6FyU&sz=w1000");
+
+  // Mahmud Mim — Coordinator (bdjso) 2015–2024, then Core Team + Advisor
+  // (SPSB) 2025–2026.
+  for(let year = 2015; year <= 2024; year++){
+    upsertPerson("lead-mahmud-mim", "Mahmud Mim", "", { year, role: "Coordinator", group: "coordinators" });
+  }
+  for(let year = 2025; year <= 2026; year++){
+    upsertPerson("lead-mahmud-mim", "Mahmud Mim", "", { year, role: "Advisor, SPSB", group: "core_team" });
+  }
+  setContactInfo("lead-mahmud-mim", "01670204045", SPSB_FULL);
+  setPhoto("lead-mahmud-mim", "https://drive.google.com/thumbnail?id=1VgFnKLnKcc3zwdM3-jhAAi0EYE-qfE3Y&sz=w1000");
+
+  // Rezaul Islam — Volunteer 2019, Organizing Secretary and SPSB Program
+  // Executive 2020–2024, Program Officer and Coordinator 2025–2026.
+  upsertPerson("lead-rezaul", "Rezaul Islam", "", { year: 2019, role: "Volunteer", group: "volunteers" });
+  for(let year = 2020; year <= 2024; year++){
+    upsertPerson("lead-rezaul", "Rezaul Islam", "", { year, role: "Organizing Secretary and SPSB Program Executive", group: "core_team" });
+  }
+  for(let year = 2025; year <= 2026; year++){
+    upsertPerson("lead-rezaul", "Rezaul Islam", "", { year, role: "Program Officer and Coordinator", group: "coordinators" });
+  }
+  setContactInfo("lead-rezaul", "01575010436", SPSB_FULL);
+
+  // Contact info (phone/university) for Coordinators/Team Leader that arrived
+  // as a separate list rather than with their original role data.
+  // NOTE: "MD MURSALINE PARVEZ" was given phone 01799396584 in the same
+  // list — but that's already MD. Riaj Sheikh's stored number. Skipped to
+  // avoid wrongly merging two different people; just set his university.
+  setContactInfo("lead-mursaline", "", "SPSB University");
+
+  /* A few example people showing that history entries don't have to
+     be consecutive years, and don't have to stay in the same group —
+     someone can volunteer in scattered years, or start as a
+     volunteer and later get promoted to Team Leader / Coordinator.
+     This is exactly what the "full history" modal is built to show.
+     Replace these with your real people, or delete this block if
+     you don't have promotion cases. */
+  const YEARS = [];
+  for(let y = YEAR_RANGE.start; y <= YEAR_RANGE.end; y++) YEARS.push(y);
+
+  // Real 2023 Volunteers. To add a phone (recommended — it's what links
+  // someone to their other years automatically) or university, change a
+  // plain string entry to ["Name", "phone", "university"] (university optional).
+  const VOLUNTEERS_2023 = [
+    ["Abdulllah Ahnaf Muttaki", "01961461961", "Chittagong University of Engineering and Technology"],
+    ["A B I Abdullah", "01641605830", "SPSB University"],
+    ["Burhan Uddin Shuvro", "01756462259", "SPSB University"],
+    ["Jakia Sultana", "01868258307", "SPSB University"],
+    ["Jannatul Mawya", "01324136097", "SPSB University"],
+    ["Jobaer islam", "01743213150", "SPSB University"],
+    ["Junaid Jain", "01904482161", "SPSB University"],
+    ["Khandoker Naeemul Haque", "01971254429", "SPSB University"],
+    ["Mansura Akter Eva", "01969100504", "SPSB University"],
+    ["Mayisha Mustarin", "01319230698", "SPSB University"],
+    ["Md Munam Shahriar Sabir", "01731514921", "SPSB University"],
+    ["Md Naim", "015217025227", "SPSB University"],
+    ["Md Rasel Islam", "01306512656", "SPSB University"],
+    ["Md Riaj Sheikh", "01799396584", "SPSB University"],
+    ["Md Shairf Mia", "01703216651", "SPSB University"],
+    ["Md. Abu Syed", "01601100495", "SPSB University"],
+    ["Md. Ariful Islam", "01585302083", "SPSB University"],
+    ["Md. Farhan Shahriar", "01518972152", "SPSB University"],
+    ["Md. Fauzul Kabir Sakib", "01568833659", "SPSB University"],
+    ["Md. Mainul Hoque", "01630283549", "SPSB University"],
+    ["Md. Mamun Hosen", "01864627107", "SPSB University"],
+    ["Md. Redwan Haque Rafid", "01537294211", "SPSB University"],
+    "Sharif Hossain",
+    ["Md.Faizer Islam", "01572100494", "SPSB University"],
+    ["Misbahur Rahman", "01675505079", "SPSB University"],
+    ["Mohammad Maksudur Rahman Mahi", "01703094823", "SPSB University"],
+    ["Mst. Jannatul Ferdousi", "01881092657", "SPSB University"],
+    ["Naima Alam Hira", "01616684868", "SPSB University"],
+    "Name",
+    ["Nazmus Saadat", "01791578123", "SPSB University"],
+    ["Nishat Tasneem Deeva", "01920774546", "SPSB University"],
+    ["Prathama Chakma", "01878812462", "SPSB University"],
+    ["S. M. Bakibillah", "01521564921", "SPSB University"],
+    ["S.M. Tanvir Hasan Siam", "01791164624", "SPSB University"],
+    ["Sabbir Ahmed", "01767552155", "SPSB University"],
+    ["Samia Anjum Likhi", "01608056739", "SPSB University"],
+    ["Sayem Sadat", "01319114144", "SPSB University"],
+    ["Shafayat Jamil", "01767724170", "SPSB University"],
+    ["Shah Md. Ahnaf Haseen", "", "SPSB University"],
+    ["Shahriar Parvez Shaon", "01878855501", "SPSB University"],
+    "Shakira Mustahid",
+    "Shaleha Mukul",
+    ["Shawonto Basak", "01633671837", "SPSB University"],
+    ["Syed Zuhair Hossain", "01756843882", "SPSB University"],
+    ["Tahmina Akter Taiba", "01890076523", "SPSB University"],
+    ["TANJILOUR SIAM", "01857841166", "SPSB University"],
+    ["Tanzim Hossain Oyshi", "01754390986", "SPSB University"],
+    ["TAQWA BINTAY KARIM NIHA", "01719339908", "SPSB University"],
+    ["Tashrifa Mafroha", "01810126471", "SPSB University"],
+    ["Tasnia Tabassum Farha", "01750364988", "SPSB University"],
+    ["Tasnim Sultana", "01516064485", "SPSB University"],
+    ["Tasnimul Hassan Oishorjo", "01851478365", "SPSB University"],
+    ["Towhid Ullah Showrab", "01631363352", "SPSB University"],
+    ["Umme Farhana", "01755164032", "SPSB University"],
+    ["Sheikh Tariful Islam", "", "SPSB University"],
+    ["Sabikun Nahar Shompa", "01621136873", "SPSB University"],
+    ["musfiqur rahman preo", "017980747417", "SPSB University"],
+    ["farzana akter lima", "01837313636", "SPSB University"],
+    ["Lamisa Manha", "", "SPSB University"],
+    ["Labiba farazi sara", "", "SPSB University"],
+    ["nilita  Mustahid  Shakira", "", "SPSB University"],
+    ["Md. Sharif Hossain Shakib", "01949277723", "SPSB University"],
+    ["Abidur rahman", "01724251833", "SPSB University"],
+    ["anik kumar shaha", "", "SPSB University"]
+  ];
+  VOLUNTEERS_2023.forEach((entry, idx) => {
+    const [name, phone, institution] = Array.isArray(entry) ? entry : [entry, "", ""];
+    upsertPerson(
+      `vol2023-${idx + 1}`,
+      name.trim(),
+      "",
+      { year: 2023, role: "Volunteer", group: "volunteers" },
+      phone,
+      institution
+    );
+  });
+
+  // Real 2025 Volunteers. Same format — plain string, or
+  // ["Name", "phone", "university"] (university optional).
+  // "Abdullah Ahnaf Muttaki" here shares a phone with the 2023 entry above
+  // (same person, spelled slightly differently that year) — the shared
+  // phone number automatically merges his record into one 2023+2025 history.
+  const VOLUNTEERS_2025 = [
+    ["Mehraz Khandakar", "1618882354", "Green University"], "Md. Adil Hossen",
+    ["Md Riad Hossain", "01986362124", "Sheikh Burhanuddin Post Graduate College"], "Md Rezaul Islam Rony",
+    ["Zadira E Zannat", "01712923564", "University of Dhaka"], ["Rafiul Hoque", "01712075433", "Green University of Bangladesh"],
+    ["Md. Raiyan Bepari", "01793527717", "Govt. Titumir College"], "Taj Islam",
+    "Kamrun Nahar Daisy", "Yasin Arafat Shikder",
+    "Utsab Sarker", ["Kazi Shaib Elahe Rudro", "01708114688", "Green University of Bangladesh"],
+    "Md Sameul Hasan", "Saad Ul Alam",
+    "Mahashweta Chowdhury", "Saiful Islam Ead",
+    "Farzana Akter Jaseya", "Jannatul Fatema",
+    "Morsheda Akter Mim", "Ovejan Paul",
+    "Mim naz Rahman", "Abid Hossain",
+    "Ariba Jahin Punnya", "Md Azmaeen Adib",
+    "Fayez Ahmad", "Sabil Islam",
+    "Nafis Noor Taseen", "Fatema Tuz Zahura",
+    ["Md. Farhan Shahriar", "01518972152", "CUET"], "MD Real Khan Munna",
+    "Lamisa Manha Aditee", "Suvasish Halder",
+    "Tasnuva Tabassum", "Sheikh Adib Tazwar",
+    "Parag Kumar Kabiraj", ["MD. Riaj Sheikh", "01799396584", "Govt. Bangla College"],
+    ["MD. Rasel Islam", "01306512656", "Dhaka International University"], ["Sabikun Nahar Shompa", "01329318316", "Tejgaon Mohila College"],
+    ["MD. Mamun Hossen", "01571458026", "Gov't Bangla College"], "Tanzim Hossain Oyshi",
+    ["Swakhar Biswas", "01964617478", "Daffodil International University"], ["MD. Eyasin Arafat", "01575663352", "National University"],
+    ["Niaz Mahmud", "01711904394", "Green University Bangladesh"], ["Sumaiya Nishe", "01537022711", "City University, Bangladesh"],
+    ["Mahathir Mohammad", "01752540124", "Military Institute of Science and Technology"], "Shotabdi Roy",
+    "Famida Faiza Trivy", ["Iftisham Hossain Sajjil", "01648437740", "North South University"],
+    ["Tawhid Ullah Showrab", "01631363352", "Dhaka International University"], ["MD. Ariful Islam", "01585302083", "Govt. Titumir College"],
+    "Nazmul Hossain", "Shariar Parvez Shaon",
+    "Mosaraf Hossain Tipu", "Sakib Nesar Ratul",
+    "Shakhira Aforoz Deepa", "Narayan Chakroborty",
+    "Maherul Azam",
+    "Rezaul Islam", "Ayub Sarker",
+    "Nasir Khan Saikat", "Promi Nahid",
+    ["Farzana Akter Lima", "01837313636", "SPSB University"], "MD Maksudur Rahman Mahi",
+    ["Abdullah Ahnaf Muttaki", "01961461961", "Chittagong University of Engineering and Technology"],
+    ["Prottasha Das Arthi", "01634513139", "Bangladesh Agricultural University"], ["Sanjida Islam", "01996573131", "Dhaka University"],
+    ["Zunaida Arjumand Jacqueline", "01716450189", "University of Rajshahi"], ["Krittika Roy", "01753594577", "East West University"],
+    ["Md. Nadim Mostofa", "01799279596", "Green University of Bangladesh"], ["MD. Moyem Ahmed", "01778881509", "Jagannath University, Dhaka"],
+    ["Md. Kayes Uddin", "01312192165", "Green University of Bangladesh"]
+  ];
+  VOLUNTEERS_2025.forEach((entry, idx) => {
+    const [name, phone, institution] = Array.isArray(entry) ? entry : [entry, "", ""];
+    upsertPerson(
+      `vol2025-${idx + 1}`,
+      name.trim(),
+      "",
+      { year: 2025, role: "Volunteer", group: "volunteers" },
+      phone,
+      institution
+    );
+  });
+
+  // Filling in a 2025 entry for people who already existed but didn't
+  // have one yet.
+  upsertPerson("vol2023-24", "Faizer Islam", "", { year: 2025, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2023-16", "Abu Syed", "", { year: 2025, role: "Volunteer", group: "volunteers" });
+
+  // Brand-new 2025 Volunteers not seen in any earlier year's roster.
+  const VOLUNTEERS_2025_EXTRA = [
+    "Sazzad Rupok", "Ariba Zahin Punno", "Swadhin Roy Sunny", "Md. Shahamat Hasan",
+    "Sadika Akter Sonali", "Owrab Azad", "Md. Rafiquzzaman", "Iran Nasrin Priti",
+    "Nazia Janniat Mim", "Md. Waliul Islam Noor", "Mou Rani Saha", "Israt Jahan Nuri",
+    "Raima Jahan Ruma", "Zarin Anjum Nilima", "Homayra Tafannum Torsha", "Jawad Al Shameen",
+    "Tahmina Akter", "Md. Tanvirul Islam", "Sumaiya Islam", "Abdur Rahman",
+    "Kazi Himel", "Farhan Islam Tanmoy", "Nishat Tasnim Vibha", "Md. Asif Imtiaz",
+    "Farhan Mushfiq", "S. A. Maya", "S. M. Shahin Shiraz", "Meharab Hossain Shipu",
+    "Sompod", "Zubayer Hasan Shoykot", "Manju Islam", "Md. Rafiqul Islam Junior",
+    "Salman Hossain", "Md. Khalilur Rahman", "Naushin", "Md. Nahid Gazi",
+    "Prodipto Paul", "Azizul Haque", "Sumaiya Sobnom", "Abdullah Al Jaber Jaber",
+    "Jannati Islam", "Afika Sultana", "Firoz Nawar Utal", "Sadia Afrin",
+    "Sumaiya Shimu", "Ayman Shihab", "Mehjabin Rahman", "Sheikh Sadi Bin Hafiz",
+    "Shah Bin Ayesha Anha", "Azmir Hasan", "Sabrina Akter Shanta", "Sumaiya Akter Binthiya",
+    "Md Kamrul Islam Shanto", "Abdullah Al Hasan Dipto", "Syeda Iffat Samanta Mou", "Md Muntasir Mamun",
+    "Md Rayhan Mahfuz Rony", "Md Fazle Rabbi", "Goutam Roy", "Nusardifa Mim",
+    "Deepika Sarkar", "Arjun Roy", "Md. Azmain", "Soumitra Barman",
+    "Mainul Islam", "Sree Bhupen Chandra Paul", "Pushpita", "Prasant",
+    "Jahid Hossain Lucid", "Abu Azad Bablu", "Arnab Mazumdar", "Jems",
+    "Baishakhi"
+  ];
+  VOLUNTEERS_2025_EXTRA.forEach((name, idx) => {
+    upsertPerson(`vol2025y-${idx + 1}`, name, "", { year: 2025, role: "Volunteer", group: "volunteers" });
+  });
+
+  // Fixes two people who'd accidentally been split into two separate
+  // records (their 2023 entry and their 2025/2026 entry never linked up).
+  // (merges and photo assignments moved to the end of the file, after
+  // all data is fully built — see below)
+
+  // 2022 Core Team — 5 people. Rezaul Islam Reza already correctly Core
+  // Team for 2022 (part of his 2020-2024 run) — confirming only.
+  setRoleForYear("lead-rezaul", 2022, "Organizing Secretary and SPSB Program Executive", "core_team");
+  upsertPerson("vol2023-63", "Abidur Rahman", "", { year: 2022, role: "Core Team", group: "core_team" });
+  upsertPerson("vol2023-57", "Musfiqur Rahman Preo", "", { year: 2022, role: "Core Team", group: "core_team" });
+  upsertPerson("core-2022-yousuf", "Yousuf Jamil", "", { year: 2022, role: "Core Team", group: "core_team" });
+  upsertPerson("core-2022-sajidur", "Sajidur Rahman Akash", "", { year: 2022, role: "Core Team", group: "core_team" });
+
+  // 2022 Volunteers — 12 unique people.
+  upsertPerson("lead-mursaline", "Md. Mursaline Parvez", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2023-16", "Md. Abu Syed", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2023-24", "Md.Faizer Islam", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2023-11", "Md Munam Shahriar Sabir", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2025-38", "Sabikun Nahar Shompa", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2023-26", "Mohammad Maksudur Rahman Mahi", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2023-34", "S.M. Tanvir Hasan Siam", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2025-40", "Tanzim Hossain Oyshi", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2022-1", "Sandij Ahmed", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2022-2", "Nafis Ahmed", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2022-3", "Md. Shithil Islam", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+  upsertPerson("vol2022-4", "M. O. B. Jihad", "", { year: 2022, role: "Volunteer", group: "volunteers" });
+
+  // 2023 Core Team — exactly these 7 people.
+  // Rezaul Islam already correctly Core Team for 2023 — confirming.
+  setRoleForYear("lead-rezaul", 2023, "Organizing Secretary and SPSB Program Executive", "core_team");
+  setRoleForYear("lead-mursaline", 2023, "Core Team", "core_team");
+  setRoleForYear("vol2023-58", 2023, "Core Team", "core_team"); // Farzana Akter Lima
+  setRoleForYear("vol2023-16", 2023, "Core Team", "core_team"); // Md. Abu Syed
+  setRoleForYear("vol2023-24", 2023, "Core Team", "core_team"); // Md.Faizer Islam
+  // Shariar Parvez Shaon had no 2023 entry yet — added fresh.
+  upsertPerson("vol2025-52", "Shariar Parvez Shaon", "", { year: 2023, role: "Core Team", group: "core_team" });
+  // Ahmmed Al Zubaer Anam is a brand-new person for 2023.
+  upsertPerson("core-2023-anam", "Ahmmed Al Zubaer Anam", "", { year: 2023, role: "Core Team", group: "core_team" });
+
+  // Real 2026 Volunteers, from the application form roster.
+  // People who already appear in an earlier year are linked to their
+  // EXISTING record here (by matching name) so their profile shows one
+  // combined multi-year history instead of a duplicate 2026-only person.
+  upsertPerson("lead-mursaline", "Md. Mursaline Parvez", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01567963471", "Green University");
+  upsertPerson("vol2025-1", "Mehraz Khandakar", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01618882354", "Green University");
+  upsertPerson("vol2025-2", "Md Adil Hossen", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01850004623", "Green University");
+  upsertPerson("vol2025-44", "Sumaiya Nishe", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01537022711", "City University");
+  upsertPerson("vol2025-41", "Swakhar Biswas", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01964617478", "Daffodil International University");
+  upsertPerson("vol2025-11", "Utsab Sarker", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01745668545", "New Govt Degree College");
+  upsertPerson("vol2023-51", "Tasnim Sultana", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01516064485", "University of Dhaka");
+  // Note: MD. Moyem Ahmed's 2025 phone (01778881509) differs from this new
+  // 2026 number (01869267265) — kept the original 2025 number; verify which is correct.
+  upsertPerson("vol2025-71", "MD. Moyem Ahmed", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01869267265", "Jagannath University");
+  upsertPerson("vol2025-42", "Md Eyasin Arafat", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01575663352", "National University");
+  upsertPerson("vol2025-49", "Tawhid Ullah Showrab", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01631363352", "Dhaka International University");
+  upsertPerson("vol2025-65", "Abdullah Ahnaf Muttaki", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01961461961", "CUET");
+  upsertPerson("vol2025-22", "Abid Hossain", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01760028266", "University of Dhaka");
+  upsertPerson("vol2025-63", "Farzana Akter Lima", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01837313636", "Institute of Science Trade and Technology");
+  upsertPerson("vol2025-23", "Ariba Jahin Punnya", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01738173311", "Shaheed Suhrawardy Medical College");
+  upsertPerson("vol2025-43", "Niaz Mahmud", "", { year: 2026, role: "Volunteer", group: "volunteers" }, "01711904394", "Green University");
+
+  // 2026-only new volunteers (not found in any earlier year's roster).
+  // Same format as other years — plain string, or ["Name", "phone", "university"].
+  const VOLUNTEERS_2026 = [
+    ["Ratul Krishna Mondol", "01623519646", "Ahsanullah University of Science and Technology"],
+    ["Md Nahiduzzaman", "01759585369", "National University"],
+    ["Mst. Sabrina Shahriar", "01304230089", "Green University"],
+    ["Md Jaed Ibni Sadman", "01971535426", "Faculty Of Engineering"],
+    ["Abdul Kader", "01798047778", "Green University"],
+    ["Mubashira Jannat", "01701325409", "ISTT (Institute of Science, Trade and Technology)"],
+    // Same phone as "Md. Raiyan Bepari" from 2025 — will auto-merge into that record.
+    ["Md. Raiyan", "01793527717", "Govt. Titumir College"],
+    ["Peuli", "01920298942", "Central Women's University"],
+    ["A. S. M. Daiyan", "01533118375", "HISTT - Institute of Science, Trade and Technology"],
+    ["Hridika Roy Arpita", "01764455125", "Tejgaon College"],
+    ["Shahta Jarab", "01916962649", "Green University"],
+    ["Ayesha Hossain", "01577035012", "Green University"],
+    ["Md. Nebir Sharowar", "01309451376", "Jagannath University"],
+    ["Oyahidur Rahman", "01818145568", "University of Dhaka"],
+    ["Afrazur Rahman", "01553085873", "Green University"],
+    ["Md. Hasan Mahmud", "01893029036", "Chittagong University"],
+    ["Lamia Jalal", "01741813585", "IUBAT - International University of Business Agriculture and Technology"],
+    ["Tahsin Tahmid Asfi", "01631495774", "Kabi Nazrul Govt College"],
+    ["Ibrahim Khalil Ullah", "01812040252", "Govt. Titumir College"],
+    ["Adesh Barua", "01822891855", "Habibullah Bahar College"],
+    ["Jannatul Firdous", "01989389344", "Green University"],
+    ["Sukanta Saha", "01783211488", "Mohammadpur Kendriya College"],
+    ["Mst. Jerin Akter", "01911899869", "Govt. Shahid Suhrawardy College"],
+    ["Dedarul Islam Sefat", "01606586934", "Islamic University of Technology"],
+    ["A. S. M. Soyaeb Reza", "01518948018", "Dhaka University"],
+    ["Abdullah Al Ahad", "01301213155", "Sir Salimullah Medical College"],
+    ["Tasnim Jahan", "01813231752", "Begum Bodrunnessa Govt Girls College"],
+    ["MD. Tahmid Miazi", "01703005188", "Green University"]
+  ];
+  VOLUNTEERS_2026.forEach((entry, idx) => {
+    const [name, phone, institution] = Array.isArray(entry) ? entry : [entry, "", ""];
+    upsertPerson(
+      `vol2026-${idx + 1}`,
+      name.trim(),
+      "",
+      { year: 2026, role: "Volunteer", group: "volunteers" },
+      phone,
+      institution
+    );
+  });
+
+  // 2026 Core Team — exactly these 10 people. Anyone else previously in
+  // Core Team for 2026 (the old placeholder committee) has been removed.
+  setRoleForYear("lead-mahmud-mim", 2026, "Advisor, SPSB", "core_team"); // already correct, confirming
+  setRoleForYear("lead-mursaline", 2026, "Core Team", "core_team");
+  setRoleForYear("vol2023-58", 2026, "Core Team", "core_team"); // Farzana Akter Lima
+  setRoleForYear("vol2025-1", 2026, "Core Team", "core_team"); // Mehraz Khandakar
+  setRoleForYear("vol2025-44", 2026, "Core Team", "core_team"); // Sumaiya Nishe
+  setRoleForYear("vol2025-11", 2026, "Core Team", "core_team"); // Utsab Sarker
+  upsertPerson("vol2025-52", "Shariar Parvez Shaon", "", { year: 2026, role: "Core Team", group: "core_team" });
+  upsertPerson("vol2025-51", "Nazmul Hossain", "", { year: 2026, role: "Core Team", group: "core_team" });
+  upsertPerson("vol2025-38", "Sabikun Nahar Shompa", "", { year: 2026, role: "Core Team", group: "core_team" });
+  upsertPerson("core-vol-mahmud-sovon", "Mahmud Sovon", "", { year: 2026, role: "Core Team", group: "core_team" }); // new person
+
+  // 2025 Core Team — exactly these 15 people. Anyone else previously in
+  // Core Team for 2025 has been removed (only Mursaline/Mahmud Mim were
+  // there before, and both are on this list).
+  setRoleForYear("lead-mahmud-mim", 2025, "Advisor, SPSB", "core_team"); // already correct, confirming
+  setRoleForYear("lead-mursaline", 2025, "Core Team", "core_team"); // corrected from "Executive" — all years should read Core Team
+  setRoleForYear("vol2025-52", 2025, "Core Team", "core_team"); // Shariar Parvez Shaon
+  setRoleForYear("vol2025-19", 2025, "Core Team", "core_team"); // Morsheda Akter Mim
+  setRoleForYear("vol2023-17", 2025, "Core Team", "core_team"); // Ariful Islam
+  setRoleForYear("vol2023-14", 2025, "Core Team", "core_team"); // MD. Riaj Sheikh
+  setRoleForYear("vol2025-41", 2025, "Core Team", "core_team"); // Swakhar Biswas
+  setRoleForYear("vol2023-53", 2025, "Core Team", "core_team"); // Towhid Ullah Showrab
+  setRoleForYear("vol2025-11", 2025, "Core Team", "core_team"); // Utsab Sarker
+  setRoleForYear("vol2025-44", 2025, "Core Team", "core_team"); // Sumaiya Nishe
+  setRoleForYear("vol2025-51", 2025, "Core Team", "core_team"); // Nazmul Hossain
+  setRoleForYear("vol2025-38", 2025, "Core Team", "core_team"); // Sabikun Nahar Shompa
+  setRoleForYear("vol2025-1", 2025, "Core Team", "core_team"); // Mehraz Khandakar
+  setRoleForYear("vol2023-58", 2025, "Core Team", "core_team"); // Farzana Akter Lima
+  // Mahmud Sovon had no 2025 entry at all yet — added fresh.
+  upsertPerson("core-vol-mahmud-sovon", "Mahmud Sovon", "", { year: 2025, role: "Core Team", group: "core_team" });
+
+  // MD. Moyem Ahmed was in the 2026 roster but didn't have a 2026 entry yet.
+  upsertPerson("vol2025-70", "MD. Moyem Ahmed", "", { year: 2026, role: "Volunteer", group: "volunteers" });
+
+  // Brand-new 2026 Volunteers not seen in any earlier year's roster.
+  const VOLUNTEERS_2026_EXTRA = [
+    "Maliha islam", "Safia Bintay Saleh", "Fahmida Akter Pammi", "Seikh Anisha Ibnat Abida"
+  ];
+  VOLUNTEERS_2026_EXTRA.forEach((name, idx) => {
+    upsertPerson(`vol2026x-${idx + 1}`, name, "", { year: 2026, role: "Volunteer", group: "volunteers" });
+  });
+
+  // Maliha islam (vol2026x-1, added above) didn't have a phone/university
+  // yet — the form response now has both.
+  setContactInfo("vol2026x-1", "01935493550", "Dhaka University");
+
+  // New rows added to the Volunteer Form (Responses) sheet since the last
+  // update (checked Aug 23, 2026). Three of these are the same people
+  // already on record from 2025 — just submitting their phone/university
+  // for the first time — so they're linked to their EXISTING id below
+  // instead of creating duplicate people:
+  upsertPerson("vol2025y-12", "Israt Jahan Nuri", "", { year: 2026, role: "Volunteer", group: "volunteers" }); // exact name match
+  setContactInfo("vol2025y-12", "01831543179", "Rajshahi Govt. Women's College");
+  // "Homayra Tafannum Torsha" (2025) / "Humaira Tafannum Torsha" (2026 form) —
+  // near-identical name, same surname pair; treated as one person.
+  upsertPerson("vol2025y-15", "Humaira Tafannum Torsha", "", { year: 2026, role: "Volunteer", group: "volunteers" });
+  setContactInfo("vol2025y-15", "01832781877", "Rajshahi Govt. Women's College");
+  // "Tahmina Akter" (2025) / "Tahmina Akhtar" (2026 form) — same name,
+  // alternate spelling; treated as one person.
+  upsertPerson("vol2025y-17", "Tahmina Akhtar", "", { year: 2026, role: "Volunteer", group: "volunteers" });
+  setContactInfo("vol2025y-17", "01715209899", "University of Rajshahi");
+  // "Iran Nasrin Priti" (2025) / "Efran Nasrin Prity" (2026 form) — close
+  // enough (same phonetic name, reordered) to be treated as one person.
+  upsertPerson("vol2025y-8", "Efran Nasrin Prity", "", { year: 2026, role: "Volunteer", group: "volunteers" });
+  setContactInfo("vol2025y-8", "01777355878", "Rajshahi University");
+
+  // Genuinely new people — no earlier-year record to link to.
+  const VOLUNTEERS_2026_EXTRA2 = [
+    ["Mehedi Hasan Joy", "01980889701", "Green University of Bangladesh"],
+    ["Shamanta Fairooz Arna", "01758416783", "East West University"],
+    ["Kazi Fatema", "01320580835", "Green University"],
+    ["Joyjit Pramanik Joy", "01731476879", "Rajshahi College"],
+    ["Ariful Islam Mahin", "01798788184", "Rajshahi College"],
+    ["MD Sami-Ul Alim", "01794337346", "Dhaka University"]
+  ];
+  VOLUNTEERS_2026_EXTRA2.forEach((entry, idx) => {
+    const [name, phone, institution] = entry;
+    upsertPerson(
+      `vol2026x2-${idx + 1}`,
+      name,
+      "",
+      { year: 2026, role: "Volunteer", group: "volunteers" },
+      phone,
+      institution
+    );
+  });
+
+  // Real photos for 2026 volunteers, from their application form uploads.
+  // Google Drive links only display if each file is shared as "Anyone
+  // with the link can view" — otherwise the onerror fallback on each
+  // <img> automatically shows their initials avatar instead.
+  setPhoto("lead-mursaline", "https://drive.google.com/thumbnail?id=1RzYpj1rQAAO74EWpzleaGe1WV_j1d-Ji&sz=w1000"); // Md. Mursaline Parvez
+  setPhoto("vol2026-1", "https://drive.google.com/thumbnail?id=16oQ4LdQQ7xxyG66a5nYKS4Kr76PQji7v&sz=w1000"); // Ratul Krishna Mojumder
+  setPhoto("vol2026-2", "https://drive.google.com/thumbnail?id=1FX9rlXZLSWCnHYglt2D6rGrSuPyqB13F&sz=w1000"); // Md Nahiduzzaman Nafi
+  setPhoto("vol2026-3", "https://drive.google.com/thumbnail?id=1mFL_jd-ltaoWJrhOLvmjsRuAn_ZowCQN&sz=w1000"); // Mst. Sabrina Shahriar
+  setPhoto("vol2026-4", "https://drive.google.com/thumbnail?id=1x28Cax0KdWNK1ClJqXuk-B907PrRadWN&sz=w1000"); // Md Jaed Ibni Sad Mahi
+  setPhoto("vol2025-1", "https://drive.google.com/thumbnail?id=1eTk5q9zwi4QwvsVXKc4tkiaEebu5ZdQz&sz=w1000"); // Mehraz Khandakar
+  setPhoto("vol2025-2", "https://drive.google.com/thumbnail?id=100Xbr7uxgIGtxSDAEnDirAFMD7FLJmM3&sz=w1000"); // Md Adil Hossen
+  setPhoto("vol2026-5", "https://drive.google.com/thumbnail?id=1Ou8JtuL7ebCPWD7o4fBQG3s_FV7NXo_t&sz=w1000"); // Abdul Kader
+  setPhoto("vol2025-44", "https://drive.google.com/thumbnail?id=1qmwCTcZK8ijYPNy4OyaaphaaiwF3qxS6&sz=w1000"); // Sumaiya Nishe
+  setPhoto("vol2025-41", "https://drive.google.com/thumbnail?id=1FJvTRpneNIREq2SbjXAYs7nBxh0I_vjr&sz=w1000"); // SWAKHAR BISWAS
+  setPhoto("vol2026-6", "https://drive.google.com/thumbnail?id=1Ei7toG89SVIFstFtu7a_z5Sk8zrbcp6b&sz=w1000"); // Mubashira Jannat
+  setPhoto("vol2025-11", "https://drive.google.com/thumbnail?id=1L5p8BCxPszI4LSAfIoMwvoM5h2c1niZq&sz=w1000"); // Utsab Sarker
+  setPhoto("vol2025-7", "https://drive.google.com/thumbnail?id=1ckvppbOw0YwY4-VaR7dng9U9hqTc40zp&sz=w1000"); // MD.RAIYAN / Md. Raiyan Bepari
+  setPhoto("vol2026-8", "https://drive.google.com/thumbnail?id=1uHmrSIj6LcMEYSgBRdM5qFh6jb5sGfDY&sz=w1000"); // Peuli
+  setPhoto("vol2026-9", "https://drive.google.com/thumbnail?id=1oStaolK64BkSH2YHUn1vrAK4jjR7dRwo&sz=w1000"); // A. S. M. Daiyan Haider Nafiu
+  setPhoto("vol2026-10", "https://drive.google.com/thumbnail?id=1fpfxBhgTu9CPpJ1N_s88iG7zEHy3WqVx&sz=w1000"); // Hridika Roy Arpita
+  setPhoto("vol2026-11", "https://drive.google.com/thumbnail?id=1wM8XTK0-Vy9Pb7gFuRB7Sjr-D9eLL2-Q&sz=w1000"); // Shahta Jarab
+  setPhoto("vol2026-12", "https://drive.google.com/thumbnail?id=1Jna0W9JQCWTbHzLjHO_IS3ezAX0T7k6O&sz=w1000"); // Ayesha Hossain Faria
+  setPhoto("vol2026-13", "https://drive.google.com/thumbnail?id=1JNIe06yN_0zKHQaaqOAtwq4FUKxCfTys&sz=w1000"); // Md. Nebir Sharowar (Dhrubo)
+  setPhoto("vol2023-51", "https://drive.google.com/thumbnail?id=1I51P5loWo3Rf7vEQJiOvn72Zpjv-GN10&sz=w1000"); // Tasnim Sultana
+  setPhoto("vol2026-14", "https://drive.google.com/thumbnail?id=1r9VlH7pg2piEY_Zsv12qQFRkxphQ9umv&sz=w1000"); // Oyahidur Rahman Mohin
+  setPhoto("vol2026-15", "https://drive.google.com/thumbnail?id=1yKpYIA9CtS0KIXpFKIyk6QJ5Z6DmaBr4&sz=w1000"); // Afrazur Rahman Maun
+  setPhoto("vol2026-16", "https://drive.google.com/thumbnail?id=1frAnf8n2-ArbIKR1dSnJ0z221b4rgPwX&sz=w1000"); // Md. Hasan Mahmud Sajib
+  setPhoto("vol2025-71", "https://drive.google.com/thumbnail?id=1h1IgGOw9rCIYMXfuCxHY4fY55sOEiiAp&sz=w1000"); // MD. Moyem Ahmed
+  setPhoto("vol2026-17", "https://drive.google.com/thumbnail?id=1nhnU6xCKpmIxv9Z7M3MTs4-X-gXPv_iM&sz=w1000"); // Lamia Jalal
+  setPhoto("vol2026-18", "https://drive.google.com/thumbnail?id=1WLrOOgOAucrvkNpChlu8eUKxgqNhreJo&sz=w1000"); // Tahsin Tahmid Asfi
+  setPhoto("vol2026-19", "https://drive.google.com/thumbnail?id=1CyM3FjnfGvzzfZhuvZi3OLZiebpozWhF&sz=w1000"); // Ibrahim khalil Ullah Ridoy
+  setPhoto("vol2025-42", "https://drive.google.com/thumbnail?id=1hlzvitV8fpwm1mm8yy-mrSV5KcqGHAMs&sz=w1000"); // Md Eyasin Arafat Rafi
+  setPhoto("vol2025-49", "https://drive.google.com/thumbnail?id=1bLn4nCUm41YGNzda9t_abrQCccr1JjpY&sz=w1000"); // TAWHID ULLAH SHOWRAB
+  setPhoto("vol2026-20", "https://drive.google.com/thumbnail?id=1Qr29o7i0q26MoJdMowKuvlhne6kpujlW&sz=w1000"); // Adesh Barua
+  setPhoto("vol2025-65", "https://drive.google.com/thumbnail?id=1FvkIBqi28Y-v7gs1dqsx4ORTyFCngQDT&sz=w1000"); // Abdullah Ahnaf Muttaki
+  setPhoto("vol2026-21", "https://drive.google.com/thumbnail?id=1vlVauz-AnjGun-jMswO86hixB6mg_-11&sz=w1000"); // Jannatul Firdous Jim
+  setPhoto("vol2026-22", "https://drive.google.com/thumbnail?id=1Tb2VD0zSdQBfrf02Le5RWL509F3ylLX_&sz=w1000"); // Sukanta Saha
+  setPhoto("vol2026-23", "https://drive.google.com/thumbnail?id=1z4kS2Cqx3fJc4Z_D_b0qq6HoxTE-62Ws&sz=w1000"); // Mst. Jerin Akter
+  setPhoto("vol2026-24", "https://drive.google.com/thumbnail?id=1Y0SyRa7U7MCpn677c7seaxABgQb-PrCm&sz=w1000"); // Dedarul Islam Sefat
+  setPhoto("vol2026-25", "https://drive.google.com/thumbnail?id=1y2BCfQox586wkjM78uhFQBMz6WBzB_dd&sz=w1000"); // A. S. M. Soyaeb Reza
+  setPhoto("vol2026-26", "https://drive.google.com/thumbnail?id=19CQo4UZqQcQt8PCmiXdIGD9Rwlic6VNu&sz=w1000"); // Abdullah Al Ahad
+  setPhoto("vol2026-27", "https://drive.google.com/thumbnail?id=1OlNNdB9AD3cZiSmrm0wiULxjupQw39JW&sz=w1000"); // Tasnim Jahan Meem
+  setPhoto("vol2025-22", "https://drive.google.com/thumbnail?id=1SLZ3CWjUr8ty68E8JDQk9AqDhuR3KcZH&sz=w1000"); // Abid Hossain
+  setPhoto("vol2026-28", "https://drive.google.com/thumbnail?id=1nYgZegOw45nHewet1l4TxkX7VZ8wU4YI&sz=w1000"); // MD.Tahmid Miazi Anas (Tabib)
+  setPhoto("vol2025-63", "https://drive.google.com/thumbnail?id=13qbGz8DlOXe0zkajBYIzyFlBjCafxMFf&sz=w1000"); // Farzana Akter Lima
+  setPhoto("vol2025-23", "https://drive.google.com/thumbnail?id=1jxpSv9ZwZzxSYNPcLF0v8fi-m5UEm634&sz=w1000"); // Ariba Jahin Punnya
+  setPhoto("vol2025-43", "https://drive.google.com/thumbnail?id=1Rmo1jPHjCUYdHxLcnbdNMM5_dVLWeoBh&sz=w1000"); // Niaz Mahmud
+
+  // Departments/majors for 2026 volunteers, from the same list that
+  // supplied the photos above. Matched to each person's existing token
+  // by name (a few by their known phone-matched id where the 2026 form
+  // used a slightly different name spelling — see the linking comments
+  // earlier in this file).
+  setDepartment("vol2026-13", "Physics"); // Md. Nebir Sharowar (Dhrubo)
+  setDepartment("vol2026-14", "Mathematics"); // Oyahidur Rahman Mohin
+  setDepartment("vol2026-15", "Artificial Intelligence and Data Science"); // Afrazur Rahman Maun
+  setDepartment("vol2026-16", "Physics"); // Md. Hasan Mahmud Sajib
+  setDepartment("vol2026-24", "Electrical and Electronic Engineering"); // Dedarul Islam Sefat
+  setDepartment("vol2026-25", "Robotics and Mechatronics Engineering"); // A. S. M. Soyaeb Reza
+  setDepartment("vol2026-26", "MBBS"); // Abdullah Al Ahad
+  setDepartment("vol2025-22", "Applied Mathematics"); // Abid Hossain
+  setDepartment("vol2026-28", "Computer Science and Engineering"); // Tahmid Miazi Anas (Tabib)
+  setDepartment("vol2023-58", "Computer Science and Engineering"); // Farzana Akter Lima
+  setDepartment("vol2025-23", "MBBS"); // Ariba Jahin Punnya
+  setDepartment("vol2026x-1", "Mathematics"); // Maliha Islam
+  setDepartment("vol2025-41", "Electrical and Electronic Engineering"); // Swakhar Biswas
+  setDepartment("vol2026-2", "English"); // Md. Nahiduzzaman Nafi
+  setDepartment("vol2026-6", "ECE"); // Mubashira Jannat
+  setDepartment("vol2026-9", "ECE"); // A. S. M. Daiyan Haider Nafiu
+  setDepartment("vol2025-43", "Computer Science and Engineering"); // Niaz Mahmud
+  setDepartment("vol2025-2", "Software Engineering"); // Md. Adil Hossen
+  setDepartment("vol2026-21", "Software Engineering"); // Jannatul Firdous Jim
+  setDepartment("vol2026-18", "Accounting"); // Tahsin Tahmid Asfi
+  setDepartment("vol2026-4", "Computer Science and Engineering"); // Md. Jaed Ibni Sad Mahi
+  setDepartment("vol2026-10", "English"); // Hridika Roy Arpita
+  setDepartment("vol2026-23", "Soil Science"); // Mst. Jerin Akter
+  setDepartment("vol2026-12", "Computer Science and Engineering"); // Ayesha Hossain Faria
+  setDepartment("vol2025-11", "Accounting"); // Utsab Sarker
+  setDepartment("vol2023-53", "Computer Science and Engineering"); // Towhid Ullah Showrab (2026 form spelled "Tawhid")
+  setDepartment("lead-mursaline", "Computer Science and Engineering"); // Md. Mursaline Parvez
+  setDepartment("vol2026-11", "Computer Science and Engineering"); // Shahta Jarab
+  setDepartment("vol2023-51", "Information Science and Library Management"); // Tasnim Sultana
+  setDepartment("vol2026-1", "Electrical and Electronic Engineering"); // Ratul Krishna Mojumder
+  setDepartment("vol2025-65", "ETE"); // Abdullah Ahnaf Muttaki
+  setDepartment("vol2026-8", "Physics"); // Peuli
+  setDepartment("vol2025-70", "Genetic Engineering and Biotechnology"); // Md. Moyem Ahmed
+  setDepartment("vol2026-17", "Agriculture"); // Lamia Jalal
+  setDepartment("vol2025-42", "Anthropology"); // Md. Eyasin Arafat Rafi
+  setDepartment("vol2026-3", "Computer Science and Engineering"); // Mst. Sabrina Shahriar
+  setDepartment("vol2025-1", "Computer Science and Engineering"); // Mehraz Khandakar
+  setDepartment("vol2025-44", "Agriculture"); // Sumaiya Nishe
+  setDepartment("vol2025-7", "Physics"); // Md. Raiyan
+  setDepartment("vol2026-19", "Economics"); // Ibrahim Khalil Ullah Ridoy
+  setDepartment("vol2026-22", "Mathematics"); // Sukanta Saha
+  setDepartment("vol2026-5", "Computer Science and Engineering"); // Abdul Kader
+  setDepartment("vol2026-20", "Psychology"); // Adesh Barua
+  setDepartment("vol2026-27", "Psychology"); // Tasnim Jahan Meem
+  setDepartment("vol2026x-2", "Mathematics"); // Safia Bintay Saleh
+  setDepartment("vol2026x-3", "Mathematics"); // Fahmida Akter Pammi
+  setDepartment("vol2026x-4", "Mathematics"); // Seikh Anisha Ibnat Abida
+  setDepartment("vol2026x2-1", "Journalism and Media Communication"); // Mehedi Hasan Joy
+  setDepartment("vol2026x2-2", "Data Science and Analytics"); // Shamanta Fairooz Arna
+  setDepartment("vol2026x2-3", "Software Engineering"); // Kazi Fatema
+  setDepartment("vol2025y-17", "Ceramics and Sculpture"); // Tahmina Akhtar / Tahmina Akter
+  setDepartment("vol2026x2-4", "Intermediate (Science)"); // Joyjit Pramanik Joy
+  setDepartment("vol2025y-15", "Zoology"); // Humaira/Homayra Tafannum Torsha
+  setDepartment("vol2025y-12", "Zoology"); // Israt Jahan Nuri
+  setDepartment("vol2025y-8", "Political Science"); // Efran Nasrin Prity / Iran Nasrin Priti
+  setDepartment("vol2026x2-5", "Physics"); // Ariful Islam Mahin
+  setDepartment("vol2026x2-6", "ACCE"); // Md. Sami-Ul Alim
+
+  // Email / present / permanent address for 2026 volunteers, from the
+  // full volunteer application export. Matched to each person's existing
+  // token the same way department was — see the linking comments earlier
+  // in this file for the handful of name-spelling variants.
+  setPersonalInfo("vol2026-13", 'dhrubo0494@gmail.com', 'Mohammadpur, Dhaka', 'Baliadangi, Thakurgaon'); // Md. Nebir Sharowar (Dhrubo)
+  setPersonalInfo("vol2026-14", 'oyahidurrahmanmohin@gmail.com', 'Lalmatia, Mohammadpur', 'Munshiganj, Dhaka'); // Oyahidur Rahman Mohin 
+  setPersonalInfo("vol2026-15", 'mdmaun066@gmail.com', '160/4 Mirpur-1  Dhaka-1216', 'Village: Baisakhia, Union: Mollarhat, Upazila: Nalchity, District: Jhalokathi , Division: Barisal'); // Afrazur Rahman Maun
+  setPersonalInfo("vol2026-16", 'sajib.physics.cu@gmail.com', 'W/E-4, West Firozshah R/A, Akbarshah, Chittagong-4207', 'North Mogdhara, Sandwip, Chittagong-4300'); // Md. Hasan Mahmud Sajib
+  setPersonalInfo("vol2026-24", 'dedarulislamsefat1@gmail.com', 'IUT Hall, Board Bazar, Dhaka.', '51/1 KC nag road, Amlapara, Narayanganj.'); // Dedarul Islam Sefat
+  setPersonalInfo("vol2026-25", 'asmsoyaebreza@gmail.com', '449,Paris Furniture Road,Kazipara,Dhaka-1217', 'Sabek Mohadebpur,Rajbari Sadar,Rajbari'); // A. S. M. Soyaeb Reza
+  setPersonalInfo("vol2026-26", 'abdullahalahad.jpt@gmail.com', 'Alauddin Boys\' Hostel,SSMC,Mitford,Dhaka-1100', 'Joypurhat'); // Abdullah Al Ahad
+  setPersonalInfo("vol2025-22", 'abid.hossainsadat@gmail.com', 'Jigatola, Dhanmondi', 'Patuakhali, Barishal'); // Abid Hossain 
+  setPersonalInfo("vol2026-28", 'tabib.anas199@gmail.com', '427, Noyatola-Chairmangoli,Mogbazar', 'Dhaka'); // MD.Tahmid Miazi Anas (Tabib)
+  setPersonalInfo("vol2023-58", 'farzanaakterlima323@gmail.com', 'Dhanmondi, Dhaka', 'Chandpur'); // Farzana Akter Lima
+  setPersonalInfo("vol2025-23", 'aribajahinpunnya2222@gmail.com', 'MBBS Girls Hostel, ShSMC', 'Dhap, Rangpur'); // Ariba Jahin Punnya 
+  setPersonalInfo("vol2026x-1", 'maliha-2024213853@math.du.ac.bd', 'ka-167/1,khilkhet dhaka', 'ka-167/1,khilkhet dhaka'); // Maliha islam
+  setPersonalInfo("vol2025-41", 'swakhar2003@gmail.com', 'Mohammedpur', 'Rajbari'); // SWAKHAR BISWAS 
+  setPersonalInfo("vol2026-2", 'nafinishat048@gmail.com', 'Kanchpur, Sonargaon, Narayanganj', 'Gaglazur, Mohanganj, Netrokona, Mymensingh'); // Md Nahiduzzaman Nafi 
+  setPersonalInfo("vol2026-6", 'mubashirajannat435@gmail.com', 'Mirpur -13', 'Savar'); // Mubashira Jannat 
+  setPersonalInfo("vol2026-9", 'asmdaiyanhaidernafiu@gmail.com', 'Mirpur -13', 'Sherpur District, Mymensingh Division'); // A. S. M. Daiyan Haider Nafiu 
+  setPersonalInfo("vol2025-43", 'https.niazmahmud@gmail.com', 'Mirpur 14', 'Nesarabad , Pirojpur'); // Niaz Mahmud
+  setPersonalInfo("vol2025-2", 'adilhossen106@gmail.com', 'Ansar camp, Mirpur 1', 'Bakergonj, Barishal'); // Md Adil Hossen 
+  setPersonalInfo("vol2026-21", 'jannatkhanmoon21@gmail.com', '54/5, Dinar Bari Mor, Matuail, Jatrabari, Dhaka', '54/5, Dinar Bari Mor, Matuail, Jatrabari, Dhaka'); // Jannatul Firdous Jim
+  setPersonalInfo("vol2026-18", 'tahsintahmidasfi012@gmail.com', 'South Mugdapara, Dhaka - 1214', 'Ghagotia, Kapasia, Gazipur'); // Tahsin Tahmid Asfi 
+  setPersonalInfo("vol2026-4", 'mdjaedibnisadmahi@gmail.com', 'Indira road, Farmgate, Tejgaon', 'Same'); // Md Jaed Ibni Sad Mahi 
+  setPersonalInfo("vol2026-10", 'hridi6244@gmail.com', 'Farmgate, Dhaka', 'Jaldhaka,Nilphamari, Rangpur'); // Hridika Roy Arpita 
+  setPersonalInfo("vol2026-23", 'mstjerinakter0@gmail.com', 'B/20, Block E, Zakir Hossain Road, Lalmatia', 'Niamatpur, Naogaon'); // Mst. Jerin Akter 
+  setPersonalInfo("vol2026-12", 'ayeshahossainbd2@gmail.com', 'Mirpur - 6, Block D, Road - 4, Pallabi Thana, Dhaka - 1216', 'Mirpur - 6, Block D, Road - 4, Pallabi Thana, Dhaka - 1216'); // Ayesha Hossain Faria
+  setPersonalInfo("vol2025-11", 'us.arup100@gmail.com', 'Rajshahi', 'Rajshahi'); // Utsab Sarker 
+  setPersonalInfo("vol2023-53", 'tawhidkhan0220@gmail.com', 'Lalmatia, Mohammadpur', 'Barishal'); // TAWHID ULLAH SHOWRAB 
+  setPersonalInfo("lead-mursaline", 'mdmursalineparvez@gmail.com', 'Dhaka', 'Homna'); // Md. Mursaline Parvez 
+  setPersonalInfo("vol2026-11", 'sjmunif@gmail.com', '27/1-A Jahanabad, Darussalam Thana, Mirpur 1, Dhaka', '50 Bardhanbari, Darussalam Thana, Mirpur 1, Dhaka'); // Shahta Jarab
+  setPersonalInfo("vol2023-51", 'tasnim7823@gmail.com', 'Hasnabad, South Keraniganj, Dhaka-1311', 'Alfadanga, Faridpur'); // Tasnim Sultana 
+  setPersonalInfo("vol2026-1", 'ratulkrishna2004@gmail.com', 'Amlapara, Narayanganj', 'Kalis choron Road, Barishal'); // Ratul Krishna Mojumder 
+  setPersonalInfo("vol2025-65", 'ahnafa420@gmail.com', 'Shah Hall, CUET', 'Dhormosagor par, Cumilla'); // Abdullah Ahnaf Muttaki 
+  setPersonalInfo("vol2026-8", 'peulijahan@gmail.com', 'Tolarbagh,Mirpur 1', 'Alormela,Kishoreganj Sadar, Kishorganj'); // Peuli
+  setPersonalInfo("vol2025-70", 'moyemahmed2002@gmail.com', 'Shonir akhra, Dhaka', 'Bagatipara,Natore'); // MD. Moyem Ahmed
+  setPersonalInfo("vol2026-17", 'lamiajalal2000@gmail.com', '3/3, Lalmatia, Dhaka-1207', 'As above'); // Lamia Jalal
+  setPersonalInfo("vol2025-42", 'mdeyasinarafatrafi@gmail.com', 'Giridhara A/a kadamtoli, Dhaka 1362', 'Bohalgasia, Patuakhali sadar,  Patuakhali'); // Md Eyasin Arafat Rafi 
+  setPersonalInfo("vol2026-3", 'sabrinashahriar2300@gmail.com', '370/1, Ashkona, College Road, Dakshinkhan, Dhaka', 'Kukurmari, Char Golabari, Madarganj, Jamalpur'); // Mst. Sabrina Shahriar 
+  setPersonalInfo("vol2025-1", 'mehrazkhandakar@gmail.com', 'Mirpur-1', 'Mirpur-1'); // Mehraz Khandakar 
+  setPersonalInfo("vol2025-44", 'sumaiyanishe65@gmail.com', 'Borowalia, Islamnogor, savar, Dhaka.', 'Borowalia, Islamnogor, savar, Dhaka'); // Sumaiya Nishe 
+  setPersonalInfo("vol2025-7", 'bepariraiyan672@gmail.com', 'Rangadia,Anowara,Chottogram', 'Chouhali,Sirajganj'); // MD.RAIYAN 
+  setPersonalInfo("vol2026-19", 'ikrridoy21@gmail.com', '7/2,English road ,Puran Dhaka.', 'Noakhali'); // Ibrahim khalil Ullah Ridoy
+  setPersonalInfo("vol2026-22", 'sukantasaha262@gmail.com', '21/3A Sukrabad, Dhanmondi-32, Dhaka', 'Gobindhopur, Dhaperhat, Shadullapur, Gaibandha'); // Sukanta Saha
+  setPersonalInfo("vol2026-5", 'princek013030@gmail.com', 'Dhaka demra west hazinagar', 'Dhaka demra west hazinagar'); // Abdul Kader
+  setPersonalInfo("vol2026-20", 'adeshbarua385@gmail.com', 'house 4,Nolvog Main Road,Turag ,Dhaka', 'Chunati Barua Para,Lohagara,Chattogram'); // Adesh Barua 
+  setPersonalInfo("vol2026-27", 'tasnimjahan119122@gmail.com', 'Bakshibazar, Dhaka', 'Narshingdi, Dhaka'); // Tasnim Jahan Meem
+  setPersonalInfo("vol2026x-2", 'safia-2024113827@math.du.ac.bd', '128/1 Azimpur lane, Azimpur Dhaka -1205', 'Kulpaddi, madaripur,dhaka'); // Safia Bintay Saleh 
+  setPersonalInfo("vol2026x-3", 'aktergulshan7@gmail', 'Azimpur,  Dhaka', 'Nabinagar, Brahmanbaria'); // Fahmida Akter Pammi 
+  setPersonalInfo("vol2026x-4", 'ibnat228@gmail.com', 'Shewrapara, Mirpur, Dhaka', 'Noakhali'); // Seikh Anisha Ibnat Abida
+  setPersonalInfo("vol2026x2-1", 'mehedihasanjoy455@gmail.com', 'Tolarbagh, Mirpur 1, Dhaka 1216', 'Vill: Dadpur, Post: Angaria, Shariatpur Sadar, Shariatpur'); // Mehedi Hasan Joy
+  setPersonalInfo("vol2026x2-2", 'shamantafairooz@gmail.com', 'Rampura Banasree,  Dhaka-1219', 'Gabindapur, Cumilla Sadar'); // Shamanta Fairooz Arna 
+  setPersonalInfo("vol2026x2-3", 'kazifatema750@gmail.com', 'BashundharaR/A', 'BashundharaR/A'); // Kazi Fatema
+  setPersonalInfo("vol2025y-17", 'tahminaakhtar1112@gmail.com', '91/2 Uposhohor, Rajshahi', '91/2 Uposhohor, Rajshahi'); // Tahmina Akhtar 
+  setPersonalInfo("vol2026x2-4", '6palash12joyjit@gmail.com', 'Ranibazar, Rajshahi', 'Naogaon'); // Joyjit Pramanik Joy
+  setPersonalInfo("vol2025y-15", 'humairatafannum63@gmail.com', 'Rajshahi Beldarpara Mor', 'Vill:Guabari,upazila:Charghat,Dis:Rajshahi'); // Humaira Tafannum Torsha 
+  setPersonalInfo("vol2025y-12", 'isratjahan00003@gmail.com', 'Malopara,Rajshahi', 'Bagmara, Rajshahi'); // Israt Jahan Nuri
+  setPersonalInfo("vol2025y-8", 'efrannasrinprity411@gmail.com', 'Nouhata, Poba, Rajshahi', 'Nouhata, Poba, Rajshahi'); // Efran Nasrin Prity
+  setPersonalInfo("vol2026x2-5", 'arifulislammahin1408@gmail.com', 'Hatem Khan,Boalia,Rajshahi', 'Bagmara,Rajshahi'); // Ariful Islam Mahin
+  setPersonalInfo("vol2026x2-6", 'Zamanmd462@gmail.com', '474 , North Shahjahanpur', 'Noakhali'); // MD Sami-Ul Alim
+
+  // Rezaul Islam — corrected 2026 role wording, university, and email.
+  setRoleForYear("lead-rezaul", 2026, "Program Officer at SPSB and Coordinator BdJSO", "coordinators");
+  setContactInfo("lead-rezaul", "", "Green University of Bangladesh");
+  setPersonalInfo("lead-rezaul", "rezaul.islam@bdosn.org", "", "");
+
+  // Spelling corrections
+  renamePerson("vol2025y-8", "Efran Nasrin Prity"); // was "Iran Nasrin Priti"
+  renamePerson("vol2025y-15", "Humaira Tafannun Torsha"); // was "Homayra Tafannum Torsha"
+  renamePerson("vol2025y-17", "Tahmina Akhtar"); // was "Tahmina Akter"
+
+  // Emails added
+  setPersonalInfo("lead-mahmud-mim", "mahmudmim9@gmail.com", "", ""); // Mahmud Mim
+  setPersonalInfo("vol2025-52", "shahriar.parvez@bdosn.org", "", ""); // Shariar Parvez Shaon
+  setPersonalInfo("vol2025-38", "sabikun.nahar@bdosn.org", "", ""); // Sabikun Nahar Shompa
+
+  // Abdullah Ahnaf Muttaki removed entirely, per request — clears all
+  // three of his years so he no longer appears anywhere on the site.
+  removeYearEntry("vol2023-1", 2023);
+  removeYearEntry("vol2023-1", 2025);
+  removeYearEntry("vol2023-1", 2026);
+
+  // Updated 2026 volunteer photos from the latest export. Several people
+  // submitted more than one photo across form resubmissions — for each,
+  // the LAST submitted photo is kept (overwriting whatever was set
+  // earlier), matched to the same existing tokens used above.
+  setPhoto("vol2026-13", "https://drive.google.com/thumbnail?id=1TQ4mMecyMGriUWtamO4RD_q0iwqaf1rQ&sz=w1000"); // Md. Nebir Sharowar Dhrubo
+  setPhoto("vol2026-14", "https://drive.google.com/thumbnail?id=1r9VlH7pg2piEY_Zsv12qQFRkxphQ9umv&sz=w1000"); // Oyahidur Rahman Mohin
+  setPhoto("vol2026-15", "https://drive.google.com/thumbnail?id=1yKpYIA9CtS0KIXpFKIyk6QJ5Z6DmaBr4&sz=w1000"); // Afrazur Rahman Maun
+  setPhoto("vol2026-16", "https://drive.google.com/thumbnail?id=1frAnf8n2-ArbIKR1dSnJ0z221b4rgPwX&sz=w1000"); // Md. Hasan Mahmud Sajib
+  setPhoto("vol2026-24", "https://drive.google.com/thumbnail?id=1Y0SyRa7U7MCpn677c7seaxABgQb-PrCm&sz=w1000"); // Dedarul Islam Sefat
+  setPhoto("vol2026-25", "https://drive.google.com/thumbnail?id=1y2BCfQox586wkjM78uhFQBMz6WBzB_dd&sz=w1000"); // A. S. M. Soyaeb Reza
+  setPhoto("vol2026-26", "https://drive.google.com/thumbnail?id=19CQo4UZqQcQt8PCmiXdIGD9Rwlic6VNu&sz=w1000"); // Abdullah Al Ahad
+  setPhoto("vol2025-22", "https://drive.google.com/thumbnail?id=1SLZ3CWjUr8ty68E8JDQk9AqDhuR3KcZH&sz=w1000"); // Abid Hossain
+  setPhoto("vol2026-28", "https://drive.google.com/thumbnail?id=1nYgZegOw45nHewet1l4TxkX7VZ8wU4YI&sz=w1000"); // MD.Tahmid Miazi Anas (Tabib)
+  setPhoto("vol2023-58", "https://drive.google.com/thumbnail?id=13qbGz8DlOXe0zkajBYIzyFlBjCafxMFf&sz=w1000"); // Farzana Akter Lima
+  setPhoto("vol2025-23", "https://drive.google.com/thumbnail?id=1jxpSv9ZwZzxSYNPcLF0v8fi-m5UEm634&sz=w1000"); // Ariba Jahin Punnya
+  setPhoto("vol2026x-1", "https://drive.google.com/thumbnail?id=1svThVRmBNo3TQmsIjZBsyMDl8uLnkKIV&sz=w1000"); // Maliha islam
+  setPhoto("vol2025-41", "https://drive.google.com/thumbnail?id=1FJvTRpneNIREq2SbjXAYs7nBxh0I_vjr&sz=w1000"); // SWAKHAR BISWAS
+  setPhoto("vol2026-2", "https://drive.google.com/thumbnail?id=1FX9rlXZLSWCnHYglt2D6rGrSuPyqB13F&sz=w1000"); // Md Nahiduzzaman Nafi
+  setPhoto("vol2026-6", "https://drive.google.com/thumbnail?id=1Ei7toG89SVIFstFtu7a_z5Sk8zrbcp6b&sz=w1000"); // Mubashira Jannat
+  setPhoto("vol2026-9", "https://drive.google.com/thumbnail?id=1oStaolK64BkSH2YHUn1vrAK4jjR7dRwo&sz=w1000"); // A. S. M. Daiyan Haider Nafiu
+  setPhoto("vol2025-43", "https://drive.google.com/thumbnail?id=1Rmo1jPHjCUYdHxLcnbdNMM5_dVLWeoBh&sz=w1000"); // Niaz Mahmud
+  setPhoto("vol2025-2", "https://drive.google.com/thumbnail?id=100Xbr7uxgIGtxSDAEnDirAFMD7FLJmM3&sz=w1000"); // Md Adil Hossen
+  setPhoto("vol2026-21", "https://drive.google.com/thumbnail?id=1vlVauz-AnjGun-jMswO86hixB6mg_-11&sz=w1000"); // Jannatul Firdous Jim
+  setPhoto("vol2026-18", "https://drive.google.com/thumbnail?id=1WLrOOgOAucrvkNpChlu8eUKxgqNhreJo&sz=w1000"); // Tahsin Tahmid Asfi
+  setPhoto("vol2026-4", "https://drive.google.com/thumbnail?id=1x28Cax0KdWNK1ClJqXuk-B907PrRadWN&sz=w1000"); // Md Jaed Ibni Sad Mahi
+  setPhoto("vol2026-10", "https://drive.google.com/thumbnail?id=1QKhemI1BGlfAVO1rNITGt2WiUOsVEEMG&sz=w1000"); // Hridika Roy Arpita
+  setPhoto("vol2026-23", "https://drive.google.com/thumbnail?id=1z4kS2Cqx3fJc4Z_D_b0qq6HoxTE-62Ws&sz=w1000"); // Mst. Jerin Akter
+  setPhoto("vol2026-12", "https://drive.google.com/thumbnail?id=1Jna0W9JQCWTbHzLjHO_IS3ezAX0T7k6O&sz=w1000"); // Ayesha Hossain Faria
+  setPhoto("vol2025-11", "https://drive.google.com/thumbnail?id=1EFwcpvJvIjMkqDNMG5nTPupghBy7UGaH&sz=w1000"); // Utsab Sarker
+  setPhoto("vol2023-53", "https://drive.google.com/thumbnail?id=1bLn4nCUm41YGNzda9t_abrQCccr1JjpY&sz=w1000"); // TAWHID ULLAH SHOWRAB
+  setPhoto("lead-mursaline", "https://drive.google.com/thumbnail?id=1RzYpj1rQAAO74EWpzleaGe1WV_j1d-Ji&sz=w1000"); // Md. Mursaline Parvez
+  setPhoto("vol2026-11", "https://drive.google.com/thumbnail?id=1wM8XTK0-Vy9Pb7gFuRB7Sjr-D9eLL2-Q&sz=w1000"); // Shahta Jarab
+  setPhoto("vol2023-51", "https://drive.google.com/thumbnail?id=1I51P5loWo3Rf7vEQJiOvn72Zpjv-GN10&sz=w1000"); // Tasnim Sultana
+  setPhoto("vol2026-1", "https://drive.google.com/thumbnail?id=16oQ4LdQQ7xxyG66a5nYKS4Kr76PQji7v&sz=w1000"); // Ratul Krishna Mojumder
+  setPhoto("vol2025-65", "https://drive.google.com/thumbnail?id=1FvkIBqi28Y-v7gs1dqsx4ORTyFCngQDT&sz=w1000"); // Abdullah Ahnaf Muttaki
+  setPhoto("vol2026-8", "https://drive.google.com/thumbnail?id=1uHmrSIj6LcMEYSgBRdM5qFh6jb5sGfDY&sz=w1000"); // Peuli
+  setPhoto("vol2025-70", "https://drive.google.com/thumbnail?id=1h1IgGOw9rCIYMXfuCxHY4fY55sOEiiAp&sz=w1000"); // MD. Moyem Ahmed
+  setPhoto("vol2026-17", "https://drive.google.com/thumbnail?id=1nhnU6xCKpmIxv9Z7M3MTs4-X-gXPv_iM&sz=w1000"); // Lamia Jalal
+  setPhoto("vol2025-42", "https://drive.google.com/thumbnail?id=1hlzvitV8fpwm1mm8yy-mrSV5KcqGHAMs&sz=w1000"); // Md Eyasin Arafat Rafi
+  setPhoto("vol2026-3", "https://drive.google.com/thumbnail?id=13Mwkb993UC5m1s_gzyk0VzXMh0n37_Mw&sz=w1000"); // Mst. Sabrina Shahriar
+  setPhoto("vol2025-1", "https://drive.google.com/thumbnail?id=1eTk5q9zwi4QwvsVXKc4tkiaEebu5ZdQz&sz=w1000"); // Mehraz Khandakar
+  setPhoto("vol2025-44", "https://drive.google.com/thumbnail?id=1qmwCTcZK8ijYPNy4OyaaphaaiwF3qxS6&sz=w1000"); // Sumaiya Nishe
+  setPhoto("vol2025-7", "https://drive.google.com/thumbnail?id=1ckvppbOw0YwY4-VaR7dng9U9hqTc40zp&sz=w1000"); // MD.RAIYAN
+  setPhoto("vol2026-19", "https://drive.google.com/thumbnail?id=1CyM3FjnfGvzzfZhuvZi3OLZiebpozWhF&sz=w1000"); // Ibrahim khalil Ullah Ridoy
+  setPhoto("vol2026-22", "https://drive.google.com/thumbnail?id=1Tb2VD0zSdQBfrf02Le5RWL509F3ylLX_&sz=w1000"); // Sukanta Saha
+  setPhoto("vol2026-5", "https://drive.google.com/thumbnail?id=1Ou8JtuL7ebCPWD7o4fBQG3s_FV7NXo_t&sz=w1000"); // Abdul Kader
+  setPhoto("vol2026-20", "https://drive.google.com/thumbnail?id=1Qr29o7i0q26MoJdMowKuvlhne6kpujlW&sz=w1000"); // Adesh Barua
+  setPhoto("vol2026-27", "https://drive.google.com/thumbnail?id=1OlNNdB9AD3cZiSmrm0wiULxjupQw39JW&sz=w1000"); // Tasnim Jahan Meem
+  setPhoto("vol2026x-2", "https://drive.google.com/thumbnail?id=1m-u3pBxZktulH0DWs_w75_xoLoOO8YHe&sz=w1000"); // Safia Bintay Saleh
+  setPhoto("vol2026x-3", "https://drive.google.com/thumbnail?id=10tF4zLDlaVKoA9JvHY97tGCndKiiwbQ2&sz=w1000"); // Fahmida Akter Pammi
+  setPhoto("vol2026x-4", "https://drive.google.com/thumbnail?id=1U00tQny4Gy9tFncxzOddbStddspPGuk0&sz=w1000"); // Seikh Anisha Ibnat Abida
+  setPhoto("vol2026x2-1", "https://drive.google.com/thumbnail?id=1aTBsisAULoaqKRCu7J8lavxASnOk1Ab2&sz=w1000"); // Mehedi Hasan Joy
+  setPhoto("vol2026x2-2", "https://drive.google.com/thumbnail?id=1ivkZC-hbgRvTEjcxeDu5WdXtnkrwDldJ&sz=w1000"); // Shamanta Fairooz Arna
+  setPhoto("vol2026x2-3", "https://drive.google.com/thumbnail?id=1gHoPdSbsnMpaNLllq0vJsJ5vFvOGUfD9&sz=w1000"); // Kazi Fatema
+  setPhoto("vol2025y-17", "https://drive.google.com/thumbnail?id=1Zq9RI94U1nnRsCSfdJaeYg8OoamWJ1_S&sz=w1000"); // Tahmina Akhtar
+  setPhoto("vol2026x2-4", "https://drive.google.com/thumbnail?id=1VSBL3pEVU7EN5dsCPuLh1w54bsHlLdow&sz=w1000"); // Joyjit Pramanik Joy
+  setPhoto("vol2025y-15", "https://drive.google.com/thumbnail?id=1Vfn6aSaCt8TdgJ19T7c5ceXB9oyptotz&sz=w1000"); // Humaira Tafannum Torsha
+  setPhoto("vol2025y-12", "https://drive.google.com/thumbnail?id=1TN_OY6h_N23SsPEWO52j5aAo4olP5KZL&sz=w1000"); // Israt Jahan Nuri
+  setPhoto("vol2025y-8", "https://drive.google.com/thumbnail?id=1e8LOgpdfvRc_1kQYZwvY9qOjP7YPgp5A&sz=w1000"); // Efran Nasrin Prity
+  setPhoto("vol2026x2-5", "https://drive.google.com/thumbnail?id=1ufhyv0FsLx01u0RJHrh1-q0oKDxzqaI6&sz=w1000"); // Ariful Islam Mahin
+  setPhoto("vol2026x2-6", "https://drive.google.com/thumbnail?id=1dlGgHaPUtRSLnj5N2tUso0_S_jYPfgiE&sz=w1000"); // MD Sami-Ul Alim
+
+  // Corrections: several people had "SPSB University" as a placeholder
+  // institution (used when the real university wasn't known at data-entry
+  // time) — these replace it with their real university. setContactInfo
+  // overwrites institution unconditionally, so this works even though
+  // upsertPerson itself won't overwrite an already-set value.
+  setContactInfo("lead-mursaline", "", "Green University of Bangladesh"); // Md Mursaline Parvez
+  setContactInfo("vol2025-52", "", "Daffodil International University"); // Shariar Parvez Shaon
+  setContactInfo("vol2023-58", "", "Institute of Science and Technology"); // farzana akter lima
+  renamePerson("vol2023-58", "Farzana Akter Lima"); // corrected capitalization
+  setContactInfo("vol2023-53", "", "Dhaka International University"); // Towhid Ullah Showrab
+
+  // Nazmul Hossain and Mahmud Sovon didn't have a university/phone on
+  // record yet — adding both from the corrected info provided.
+  setContactInfo("vol2025-51", "01685768413", "Southeast University"); // Nazmul Hossain
+  setContactInfo("core-vol-mahmud-sovon", "01717246132", ""); // Mahmud Sovon (no university given)
+
+  // Removing 2026 for a few people (they shouldn't be shown that year).
+  removeYearEntry("vol2025-22", 2026); // Abid Hossain
+  removeYearEntry("vol2025-71", 2026); // Md. Kayes Uddin
+  removeYearEntry("vol2026-18", 2026); // Tahsin Tahmid Asfi
+  // Note: Saad Ul Alam only ever had a 2025 entry, no 2026 one to remove.
+
+  // 2025: moving these three from Organizing Secretary to Volunteers & Mentors.
+  setRoleForYear("vol2025-1", 2025, "Volunteer", "volunteers"); // Mehraz Khandakar
+  setRoleForYear("vol2025-11", 2025, "Volunteer", "volunteers"); // Utsab Sarker
+  setRoleForYear("vol2025-44", 2025, "Volunteer", "volunteers"); // Sumaiya Nishe
+
+  // 2024: adding Anam and Morsheda Akter Mim to Organizing Secretary.
+  upsertPerson("core-2023-anam", "Ahmmed Al Zubaer Anam", "", { year: 2024, role: "Organizing Secretary", group: "core_team" });
+  upsertPerson("vol2025-19", "Morsheda Akter Mim", "", { year: 2024, role: "Organizing Secretary", group: "core_team" });
+
+  // 2022: Yousuf Jamil moves to Volunteers & Mentors, Mursaline moves to
+  // Organizing Secretary.
+  setRoleForYear("core-2022-yousuf", 2022, "Volunteer", "volunteers");
+  setRoleForYear("lead-mursaline", 2022, "Core Team", "core_team"); // corrected from "Organizing Secretary" — all years should read Core Team
+
+  // Fixes people who'd accidentally been split into two separate records
+  // (their entries in different years never linked up, usually because
+  // no phone number connected them, or their name was spelled slightly
+  // differently in different years' lists). Run last, after all data
+  // above is fully built, so there's nothing left to duplicate into.
+  mergeDuplicate("vol2025-38", "vol2023-56"); // Sabikun Nahar Shompa
+  mergeDuplicate("vol2025-52", "vol2023-40"); // Shariar/Shahriar Parvez Shaon (spelling variant)
+  mergeDuplicate("vol2025-40", "vol2023-47"); // Tanzim Hossain Oyshi
+
+  // Real photos for a batch of Coordinators/Core Team people.
+  setPhoto("vol2023-17", "https://drive.google.com/thumbnail?id=1FoFiWpHdYOvF4pfbvyhL2gIIT-pVN5vj&sz=w1000"); // ARIFUL ISLAM
+  setPhoto("vol2023-14", "https://drive.google.com/thumbnail?id=1Iy_ycc7TNWY8ePNEUjBwzXzWK0wP0AJy&sz=w1000"); // MD. Riaj Sheikh
+  setPhoto("vol2023-53", "https://drive.google.com/thumbnail?id=1bLn4nCUm41YGNzda9t_abrQCccr1JjpY&sz=w1000"); // Towhid Ullah Showrab
+  setPhoto("vol2025-51", "https://drive.google.com/thumbnail?id=1F8a6hzA45egpk91kNMn0WRgHjr1JYY8v&sz=w1000"); // Nazmul Hossain
+  setPhoto("core-vol-mahmud-sovon", "https://drive.google.com/thumbnail?id=1I9zQasq-DKnftCmJU7V7tevYMLCni7yF&sz=w1000"); // Mahmud Sovon
+  setPhoto("lead-rezaul", "https://drive.google.com/thumbnail?id=1L1-eMdeJmwQoe41yvPznqJ0IfYQ4FtAS&sz=w1000"); // Rezaul Islam
+  setPhoto("lead-mursaline", "https://drive.google.com/thumbnail?id=1JUhnNDMiBqdX6lYf6rrpbltBcngkHcEL&sz=w1000"); // Md. Mursaline Parvez
+  setPhoto("core-2023-anam", "https://drive.google.com/thumbnail?id=1R3ztSJib9ULpIdfIAzRoXG9Qe3ICfYJb&sz=w1000"); // Ahmmed Al Zubaer Anam
+  setPhoto("vol2023-58", "https://drive.google.com/thumbnail?id=13qbGz8DlOXe0zkajBYIzyFlBjCafxMFf&sz=w1000"); // Farzana Akter Lima
+  setPhoto("vol2023-16", "https://drive.google.com/thumbnail?id=1rPmAdcj_ZzaRJUVKaQihIMjNqTWlMZMR&sz=w1000"); // Md. Abu Syed
+  setPhoto("vol2023-24", "https://drive.google.com/thumbnail?id=13LIjPPMiwAFEKnuONt6bju7aP_bAOTFt&sz=w1000"); // Md.Faizer Islam
+  setPhoto("vol2025-52", "https://drive.google.com/thumbnail?id=1UmAgos9wRj_DcuoiewhHi-E7-OmoU1LB&sz=w1000"); // Shariar Parvez Shaon
+  setPhoto("vol2025-38", "https://drive.google.com/thumbnail?id=15bv7Of4tZY96KvnhAg4LMa9uk9k3KAsb&sz=w1000"); // Sabikun Nahar Shompa
+
+  const GROUP_LABELS = {
+    coordinators: "Secretariat",
+    core_team: "Organizing Secretary",
+    volunteers: "Volunteers & Mentors"
+  };
+  const GROUP_ORDER = ["coordinators", "core_team", "volunteers"];
+
+  const ICONS = {
+    cap: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5 12 5l10 4.5-10 4.5-10-4.5z"/><path d="M6 11.5v4c0 1.5 2.5 3 6 3s6-1.5 6-3v-4"/><path d="M22 9.5v6"/></svg>`,
+    crown: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8 4 3 5-6 5 6 4-3-2 10H5L3 8z"/></svg>`,
+    people: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 19c0-3.3 2.9-5.5 6.5-5.5s6.5 2.2 6.5 5.5"/><path d="M16.5 8.3a3 3 0 1 1 0 5.9"/><path d="M17 13.6c2.6.5 4.5 2.3 4.5 5.4"/></svg>`,
+    wallet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="13" rx="2.2"/><path d="M2.5 10h19"/><circle cx="17" cy="14" r="1.2" fill="currentColor" stroke="none"/></svg>`,
+    star: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.7 6.2.6-4.7 4.2 1.4 6.1L12 16.9 6.5 19.6l1.4-6.1-4.7-4.2 6.2-.6L12 3z"/></svg>`,
+    compass: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="m15 9-2 6-6 2 2-6 6-2z"/></svg>`,
+    heart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.7-9.8-9.3C.6 7.7 2.2 4.5 5.4 3.8c2-.4 3.9.5 5 2.2 1.1-1.7 3-2.6 5-2.2 3.2.7 4.8 3.9 3.2 7.4-2.3 4.6-9.8 9.3-9.8 9.3z"/></svg>`,
+    phone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1v3.6c0 .6-.4 1-1 1C10.6 21.1 2.9 13.4 2.9 3.7c0-.6.4-1 1-1H7.5c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1L6.6 10.8z"/></svg>`,
+    mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg>`,
+    pin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s7-6.3 7-12A7 7 0 0 0 5 9.5c0 5.7 7 12 7 12z"/><circle cx="12" cy="9.5" r="2.3"/></svg>`
+  };
+
+  const GROUP_ICON = { coordinators: 'compass', core_team: 'star', volunteers: 'heart', executives: 'crown' };
+
+  function iconFor(role){
+    const r = role.toLowerCase();
+    if(r.includes('coordinator')) return ICONS.compass;
+    if(r.includes('team leader')) return ICONS.star;
+    if(r.includes('volunteer')) return ICONS.heart;
+    if(r.includes('moderator')) return ICONS.cap;
+    if(r.includes('president')) return ICONS.crown;
+    if(r.includes('secretary')) return ICONS.people;
+    if(r.includes('treasurer')) return ICONS.wallet;
+    return ICONS.star;
+  }
+
+  function sortedHistory(p){
+    return [...p.history].sort((a,b) => b.year - a.year);
+  }
+
+  // ============================================================
+  // PER-MEMBER PHOTO OVERRIDES — one small table, keyed by each
+  // member's own token (their existing id, e.g. "coord-munir-hasan").
+  // Everyone uses the shared --photo-margin / --photo-padding tokens
+  // from :root by default. Add a member's token here ONLY if that one
+  // person's photo needs different spacing — nothing else changes,
+  // and it applies automatically everywhere that member appears
+  // (every year, every list) since rendering always looks up the
+  // token first.
+  //
+  // Example — Munir Hasan (token: coord-munir-hasan), President SPSB,
+  // given slightly roomier spacing than everyone else:
+  //   "coord-munir-hasan": { margin: "10px", padding: "8px" },
+  // ============================================================
+  const PHOTO_OVERRIDES = {
+    "coord-munir-hasan": { margin: "10px", padding: "8px" },
+  };
+
+  // Photo renders last (rightmost) in every card, in every group and
+  // every year. Spacing comes from the PHOTO TOKENS in :root by
+  // default, or from PHOTO_OVERRIDES above for one specific member.
+  function card(p, entryForYear, indexInSection){
+    const safeName = p.name.replace(/'/g, "\\'");
+    const override = PHOTO_OVERRIDES[p.id];
+    const photoStyle = override
+      ? ` style="margin:${override.margin};padding:${override.padding};"`
+      : "";
+    const photo = `
+      <div class="card-photo"${photoStyle}>
+        <img src="${p.photo}" alt="${p.name}" loading="lazy"
+             onerror="this.onerror=null;this.src=(window.__avatarFallback ? window.__avatarFallback('${safeName}', ${p.avatarSeed}) : this.src);">
+      </div>`;
+    const info = `
+      <div class="card-info">
+        <div class="card-name-row">${iconFor(entryForYear.role)}<span class="card-name">${p.name}</span></div>
+        <p class="card-role">${entryForYear.role}</p>
+      </div>`;
+    return `
+      <div class="card" data-id="${p.id}" data-group="${entryForYear.group}" tabindex="0" role="button" aria-haspopup="dialog">
+        ${info}
+        ${photo}
+      </div>`;
+  }
+
+  // Preserves the exact person-order given for Core Team, per year,
+  // instead of whatever internal order they happened to be created in.
+  const CORE_TEAM_ORDER = {
+    2022: ["lead-rezaul", "vol2023-63", "vol2023-57", "core-2022-yousuf", "core-2022-sajidur"],
+    2023: ["lead-rezaul", "lead-mursaline", "core-2023-anam", "vol2023-58", "vol2023-16", "vol2023-24", "vol2025-52"],
+    2025: [
+      "lead-mahmud-mim", // Mahmud Mim
+      "lead-mursaline", // Md Mursaline Parvez
+      "vol2025-52", // Shariar Parvez Shaon
+      "vol2025-19", // Morsheda Akter Mim
+      "vol2023-17", // Md. Ariful Islam
+      "vol2023-14", // Md Riaj Sheikh
+      "vol2025-41", // Swakhar Biswas
+      "vol2023-53", // Towhid Ullah Showrab
+      "vol2025-11", // Utsab Sarker
+      "vol2025-44", // Sumaiya Nishe
+      "vol2025-51", // Nazmul Hossain
+      "vol2025-38", // Sabikun Nahar Shompa
+      "vol2025-1", // Mehraz Khandakar
+      "core-vol-mahmud-sovon", // Mahmud Sovon
+      "vol2023-58", // farzana akter lima
+    ],
+    2026: ["lead-mahmud-mim", "lead-mursaline", "vol2025-52", "vol2023-58", "vol2025-51", "vol2025-38", "vol2025-1", "vol2025-44", "core-vol-mahmud-sovon", "vol2025-11"]
+  };
+
+  // Preserves the exact person-order given for the 2025 Volunteers list.
+  const VOLUNTEER_ORDER = {
+    2022: ["lead-mursaline", "vol2023-16", "vol2023-24", "vol2023-11", "vol2025-38", "vol2023-26", "vol2023-34", "vol2025-40", "vol2022-1", "vol2022-2", "vol2022-3", "vol2022-4"],
+    2023: [
+      "vol2023-18", "vol2023-11", "vol2023-1", "vol2023-2", "vol2023-3", "vol2023-4", "vol2023-5", "vol2023-6",
+      "vol2023-7", "vol2023-8", "vol2023-9", "vol2023-10", "vol2025-38", "vol2023-12", "vol2023-13", "vol2023-14",
+      "vol2023-15", "vol2023-17", "vol2023-19", "vol2023-20", "vol2023-21", "vol2023-22", "vol2023-62", "vol2023-25",
+      "vol2023-26", "vol2023-27", "vol2023-28", "vol2023-30", "vol2023-31", "vol2023-32", "vol2023-33", "vol2023-34",
+      "vol2023-35", "vol2023-36", "vol2023-37", "vol2023-38", "vol2023-39", "vol2023-41", "vol2023-42", "vol2023-43",
+      "vol2023-44", "vol2023-45", "vol2023-46", "vol2025-40", "vol2023-48", "vol2023-49", "vol2023-50", "vol2023-51",
+      "vol2023-52", "vol2023-53", "vol2023-54"
+    ],
+    2025: [
+      "vol2025-2", // Md. Adil Hossen
+      "vol2025-42", // MD. Eyasin Arafat
+      "vol2025-12", // Kazi Shaib Elahe Rudro
+      "vol2025-3", // Md Riad Hossain
+      "vol2025-4", // Md Rezaul Islam Rony
+      "vol2025-6", // Rafiul Hoque
+      "vol2025-7", // Md. Raiyan Bepari
+      "vol2025-8", // Taj Islam
+      "vol2025-9", // Kamrun Nahar Daisy
+      "vol2025-10", // Yasin Arafat Shikder
+      "vol2025-20", // Ovejan Paul
+      "vol2025-21", // Mim naz Rahman
+      "vol2025-39", // MD. Mamun Hossen
+      "vol2025-14", // Saad Ul Alam
+      "vol2025-15", // Mahashweta Chowdhury
+      "vol2025-16", // Saiful Islam Ead
+      "vol2025-17", // Farzana Akter Jaseya
+      "vol2025-18", // Jannatul Fatema
+      "vol2025-22", // Abid Hossain
+      "vol2025-23", // Ariba Jahin Punnya
+      "vol2025-24", // Md Azmaeen Adib
+      "vol2025-25", // Fayez Ahmad
+      "vol2025-26", // Sabil Islam
+      "vol2025-27", // Nafis Noor Taseen
+      "vol2025-28", // Fatema Tuz Zahura
+      "vol2023-18", // Md. Farhan Shahriar
+      "vol2025-30", // MD Real Khan Munna
+      "vol2025-31", // Lamisa Manha Aditee
+      "vol2025-32", // Suvasish Halder
+      "vol2025-33", // Tasnuva Tabassum
+      "vol2025-34", // Sheikh Adib Tazwar
+      "vol2025-35", // Parag Kumar Kabiraj
+      "vol2025-63", // MD Maksudur Rahman Mahi
+      "vol2023-13", // Md Rasel Islam
+      "vol2025-40", // Tanzim Hossain Oyshi
+      "vol2023-24", // Md.Faizer Islam
+      "vol2023-16", // Md. Abu Syed
+      "vol2025-43", // Niaz Mahmud
+      "vol2025-45", // Mahathir Mohammad
+      "vol2025-46", // Shotabdi Roy
+      "vol2025-47", // Famida Faiza Trivy
+      "vol2025-48", // Iftisham Hossain Sajjil
+      "vol2025y-1", // Sazzad Rupok
+      "vol2025y-2", // Ariba Zahin Punno
+      "vol2025y-3", // Swadhin Roy Sunny
+      "vol2025y-4", // Md. Shahamat Hasan
+      "vol2025y-5", // Sadika Akter Sonali
+      "vol2025y-6", // Owrab Azad
+      "vol2025y-7", // Md. Rafiquzzaman
+      "vol2025y-8", // Iran Nasrin Priti
+      "vol2025y-9", // Nazia Janniat Mim
+      "vol2025y-10", // Md. Waliul Islam Noor
+      "vol2025y-11", // Mou Rani Saha
+      "vol2025y-12", // Israt Jahan Nuri
+      "vol2025y-13", // Raima Jahan Ruma
+      "vol2025y-14", // Zarin Anjum Nilima
+      "vol2025y-15", // Homayra Tafannum Torsha
+      "vol2025y-16", // Jawad Al Shameen
+      "vol2025y-17", // Tahmina Akter
+      "vol2025y-18", // Md. Tanvirul Islam
+      "vol2025y-19", // Sumaiya Islam
+      "vol2025y-20", // Abdur Rahman
+      "vol2025y-21", // Kazi Himel
+      "vol2025y-22", // Farhan Islam Tanmoy
+      "vol2025y-23", // Nishat Tasnim Vibha
+      "vol2025y-24", // Md. Asif Imtiaz
+      "vol2025y-25", // Farhan Mushfiq
+      "vol2025y-26", // S. A. Maya
+      "vol2025y-27", // S. M. Shahin Shiraz
+      "vol2025y-28", // Meharab Hossain Shipu
+      "vol2025y-29", // Sompod
+      "vol2025y-30", // Zubayer Hasan Shoykot
+      "vol2025y-31", // Manju Islam
+      "vol2025y-32", // Md. Rafiqul Islam Junior
+      "vol2025y-33", // Salman Hossain
+      "vol2025y-34", // Md. Khalilur Rahman
+      "vol2025y-35", // Naushin
+      "vol2025y-36", // Md. Nahid Gazi
+      "vol2025y-37", // Prodipto Paul
+      "vol2025y-38", // Azizul Haque
+      "vol2025y-39", // Sumaiya Sobnom
+      "vol2025y-40", // Abdullah Al Jaber Jaber
+      "vol2025y-41", // Jannati Islam
+      "vol2025y-42", // Afika Sultana
+      "vol2025y-43", // Firoz Nawar Utal
+      "vol2025y-44", // Sadia Afrin
+      "vol2025y-45", // Sumaiya Shimu
+      "vol2025y-46", // Ayman Shihab
+      "vol2025y-47", // Mehjabin Rahman
+      "vol2025y-48", // Sheikh Sadi Bin Hafiz
+      "vol2025y-49", // Shah Bin Ayesha Anha
+      "vol2025y-50", // Azmir Hasan
+      "vol2025y-51", // Sabrina Akter Shanta
+      "vol2025y-52", // Sumaiya Akter Binthiya
+      "vol2025y-53", // Md Kamrul Islam Shanto
+      "vol2025y-54", // Abdullah Al Hasan Dipto
+      "vol2025y-55", // Syeda Iffat Samanta Mou
+      "vol2025y-56", // Md Muntasir Mamun
+      "vol2025y-57", // Md Rayhan Mahfuz Rony
+      "vol2025y-58", // Md Fazle Rabbi
+      "vol2025y-59", // Goutam Roy
+      "vol2025y-60", // Nusardifa Mim
+      "vol2025y-61", // Deepika Sarkar
+      "vol2025y-62", // Arjun Roy
+      "vol2025y-63", // Md. Azmain
+      "vol2025y-64", // Soumitra Barman
+      "vol2025y-65", // Mainul Islam
+      "vol2025y-66", // Sree Bhupen Chandra Paul
+      "vol2025y-67", // Pushpita
+      "vol2025y-68", // Prasant
+      "vol2025y-69", // Jahid Hossain Lucid
+      "vol2025y-70", // Abu Azad Bablu
+      "vol2025y-71", // Arnab Mazumdar
+      "vol2025y-72", // Jems
+      "vol2025y-73", // Baishakhi
+    
+    ]
+  };
+
+  let currentYear = null;
+
+  function renderYear(year){
+    year = Number(year);
+    currentYear = year;
+    const content = document.getElementById('content');
+    let html = "";
+
+    GROUP_ORDER.forEach(group => {
+      let members = PEOPLE
+        .map(p => ({ p, entry: p.history.find(h => h.year === year && h.group === group) }))
+        .filter(x => x.entry);
+
+      const orderMap = group === 'core_team' ? CORE_TEAM_ORDER : (group === 'volunteers' ? VOLUNTEER_ORDER : null);
+      if(orderMap && orderMap[year]){
+        const order = orderMap[year];
+        members.sort((a, b) => {
+          const ia = order.indexOf(a.p.id), ib = order.indexOf(b.p.id);
+          return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+        });
+      }
+
+      if(members.length){
+        const gridClass = 'grid';
+        const gridId = group === 'volunteers' ? ' id="volunteersGrid"' : '';
+        html += `
+          <section class="group fade-in">
+            <div class="section-heading ${group}">${ICONS[GROUP_ICON[group]]}<h2>${GROUP_LABELS[group]}</h2><span class="count">${members.length}</span><div class="rule"></div></div>
+            <div class="${gridClass}"${gridId}>
+              ${members.map(({p, entry}, i) => card(p, entry, i)).join("")}
+            </div>
+          </section>`;
+      }
+    });
+
+    content.innerHTML = html || `<p style="color:var(--muted);">No records for ${year}.</p>`;
+
+    content.querySelectorAll('.card').forEach(el => {
+      el.addEventListener('click', () => openModal(el.dataset.id));
+      el.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openModal(el.dataset.id); }
+      });
+    });
+  }
+
+  function shuffleArray(arr){
+    // Fisher–Yates — kept as a small utility; not used by the row-rotation
+    // animation below, but harmless to have around if a plain shuffle is
+    // ever wanted elsewhere.
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Cascading row swap for the Volunteers & Mentors grid, every 10
+  // seconds: row 1 and row 2 swap places first; 1 second later, whichever
+  // row now holds the original row-1 cards swaps down into row 3's spot
+  // (so row 3 moves up to 2nd place); another second later it swaps into
+  // row 4's spot, and so on — one swap per second — until the original
+  // row 1 has bubbled all the way down to the last row. Only the
+  // Volunteers & Mentors grid is touched; Secretariat and Organizing
+  // Secretary are untouched, and PEOPLE/VOLUNTEER_ORDER are never
+  // modified — this is purely a display-order animation.
+  function applyRowOrderWithFlip(grid, newIds){
+    const cardsBefore = Array.from(grid.querySelectorAll('.card'));
+    const rectsBefore = new Map();
+    cardsBefore.forEach(el => rectsBefore.set(el.dataset.id, el.getBoundingClientRect()));
+
+    const byId = new Map();
+    PEOPLE.forEach(p => {
+      const entry = p.history.find(h => h.year === currentYear && h.group === 'volunteers');
+      if(entry) byId.set(p.id, { p, entry });
+    });
+
+    grid.innerHTML = newIds.map((id, i) => {
+      const { p, entry } = byId.get(id);
+      return card(p, entry, i);
+    }).join("");
+
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cardsAfter = Array.from(grid.querySelectorAll('.card'));
+    cardsAfter.forEach(el => {
+      el.addEventListener('click', () => openModal(el.dataset.id));
+      el.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openModal(el.dataset.id); }
+      });
+      if(reduceMotion) return;
+      const first = rectsBefore.get(el.dataset.id);
+      if(!first) return;
+      const last = el.getBoundingClientRect();
+      const dx = first.left - last.left;
+      const dy = first.top - last.top;
+      if(dx === 0 && dy === 0) return;
+      el.style.transition = 'none';
+      el.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    if(reduceMotion) return;
+    void grid.offsetHeight;
+    cardsAfter.forEach(el => {
+      el.style.transition = 'transform 0.6s cubic-bezier(.4,0,.2,1)';
+      el.style.transform = '';
+      el.addEventListener('transitionend', () => { el.style.transition = ''; }, { once: true });
+    });
+  }
+
+  function cascadeRotateVolunteers(){
+    const yearAtStart = currentYear;
+    if(yearAtStart === null){ setTimeout(cascadeRotateVolunteers, 5000); return; }
+    const grid = document.getElementById('volunteersGrid');
+    if(!grid){ setTimeout(cascadeRotateVolunteers, 5000); return; }
+
+    const colCount = getComputedStyle(grid).gridTemplateColumns.split(' ').length || 3;
+    let idsInOrder = Array.from(grid.querySelectorAll('.card')).map(el => el.dataset.id);
+    const totalRows = Math.ceil(idsInOrder.length / colCount);
+    if(totalRows < 2){ setTimeout(cascadeRotateVolunteers, 5000); return; }
+
+    const heading = document.querySelector('.section-heading.volunteers');
+    const pulseHeading = () => {
+      if(!heading) return;
+      heading.classList.add('is-shuffling');
+      setTimeout(() => heading.classList.remove('is-shuffling'), 900);
+    };
+
+    function swapRows(rowA, rowB){
+      const startA = rowA * colCount, endA = Math.min(startA + colCount, idsInOrder.length);
+      const startB = rowB * colCount, endB = Math.min(startB + colCount, idsInOrder.length);
+      const rowAIds = idsInOrder.slice(startA, endA);
+      const rowBIds = idsInOrder.slice(startB, endB);
+      const next = idsInOrder.slice();
+      for(let i = 0; i < rowBIds.length; i++) next[startA + i] = rowBIds[i];
+      for(let i = 0; i < rowAIds.length; i++) next[startB + i] = rowAIds[i];
+      idsInOrder = next;
+    }
+
+    // travelingRow = which row currently holds the original row-1 cards.
+    let travelingRow = 0;
+    function stepDown(){
+      // Bail out cleanly if the person switched year tabs mid-cascade —
+      // the grid has since been rebuilt for a different year.
+      if(currentYear !== yearAtStart) return;
+      const liveGrid = document.getElementById('volunteersGrid');
+      if(!liveGrid){ setTimeout(cascadeRotateVolunteers, 5000); return; }
+
+      if(travelingRow >= totalRows - 1){
+        setTimeout(cascadeRotateVolunteers, 5000); // reached the bottom — pause, then start again
+        return;
+      }
+
+      swapRows(travelingRow, travelingRow + 1);
+      travelingRow++;
+      pulseHeading();
+      applyRowOrderWithFlip(liveGrid, idsInOrder);
+      setTimeout(stepDown, 1000);
+    }
+    stepDown();
+  }
+  setTimeout(cascadeRotateVolunteers, 5000);
+
+  // 3D tilt-on-hover for every card, everywhere on the site (Secretariat,
+  // Organizing Secretary, Volunteers & Mentors — all years). The card
+  // rotates in perspective to follow the cursor, with a light-glare sweep
+  // (the .card::after radial gradient) and a shadow that shifts with the
+  // tilt for a sense of real depth. Delegated on `document` rather than
+  // attached per-card, so it keeps working automatically after any
+  // re-render (switching years, the Volunteers row-swap animation) —
+  // nothing needs to be reattached.
+  const tiltEnabled = window.matchMedia
+    && window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if(tiltEnabled){
+    const TILT_MAX = 10; // degrees
+    let activeTiltCard = null;
+
+    function resetTilt(el){
+      el.style.transform = '';
+      el.style.boxShadow = '';
+      el.style.setProperty('--glare-opacity', '0');
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      const card = e.target.closest && e.target.closest('.card');
+
+      if(activeTiltCard && activeTiltCard !== card){
+        resetTilt(activeTiltCard);
+        activeTiltCard = null;
+      }
+      if(!card) return;
+      activeTiltCard = card;
+
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const rotateY = (px - 0.5) * TILT_MAX * 2;
+      const rotateX = -(py - 0.5) * TILT_MAX * 2;
+
+      card.style.transform = `perspective(700px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+      card.style.setProperty('--tilt-mx', `${px * 100}%`);
+      card.style.setProperty('--tilt-my', `${py * 100}%`);
+      card.style.setProperty('--glare-opacity', '1');
+
+      // Shadow leans away from the tilt direction, like light is hitting
+      // the raised edge of the card.
+      const shadowX = -rotateY * 1.1;
+      const shadowY = rotateX * 1.1 + 10;
+      card.style.boxShadow = `${shadowX}px ${shadowY}px 28px rgba(10,60,55,0.18)`;
+    });
+
+    // mousemove stops firing once the cursor leaves the window entirely —
+    // make sure a tilted card doesn't get stuck mid-tilt in that case.
+    document.addEventListener('mouseleave', () => {
+      if(activeTiltCard){ resetTilt(activeTiltCard); activeTiltCard = null; }
+    });
+  }
+
+  function renderTabs(){
+    const years = [];
+    for(let y = YEAR_RANGE.end; y >= YEAR_RANGE.start; y--) years.push(y);
+    const tabWrap = document.getElementById('yearTabs');
+    tabWrap.innerHTML = years.map((y, i) =>
+      `<button class="year-tab${i===0 ? ' active' : ''}" data-year="${y}">${y}</button>`
+    ).join("");
+
+    tabWrap.querySelectorAll('.year-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabWrap.querySelectorAll('.year-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderYear(btn.dataset.year);
+      });
+    });
+
+    renderYear(years[0]);
+  }
+
+  function openModal(id){
+    const overlay = document.getElementById('modalOverlay');
+    const p = PEOPLE.find(x => x.id === id);
+    if(!p || !overlay) return;
+    const hist = sortedHistory(p);
+
+    const modalAvatarEl = document.getElementById('modalAvatar');
+    modalAvatarEl.onerror = () => { modalAvatarEl.onerror = null; modalAvatarEl.src = localAvatar(p.name, p.avatarSeed); };
+    modalAvatarEl.src = p.photo;
+    modalAvatarEl.alt = p.name;
+    document.getElementById('modalName').textContent = p.name;
+    document.getElementById('modalCurrentRole').textContent = `${hist[0].role} · ${hist[0].year}`;
+
+    // Fills one info-row: icon chip (SVG) + text, hiding the entire row
+    // (not just the text) when there's nothing to show.
+    function fillInfoRow(rowId, textId, iconSvg, text, href){
+      const row = document.getElementById(rowId);
+      const textEl = document.getElementById(textId);
+      if(text){
+        row.querySelector('.info-icon').innerHTML = iconSvg;
+        if(href){
+          textEl.innerHTML = `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
+        } else {
+          textEl.textContent = text;
+        }
+        row.hidden = false;
+      } else {
+        row.hidden = true;
+      }
+    }
+
+    const instText = [p.institution, p.department].filter(Boolean).join(" — ");
+    fillInfoRow('rowInstitution', 'modalInstitution', ICONS.cap, instText);
+
+    // Displayed phone hides the last 3 digits (e.g. 01309451***) — the
+    // full number stays stored on the person record since it's still
+    // needed internally to auto-merge duplicate entries by phone.
+    function maskPhone(phone){
+      const digits = String(phone).replace(/[^0-9]/g, '');
+      if(digits.length <= 3) return phone;
+      return digits.slice(0, -3) + "***";
+    }
+    fillInfoRow('rowPhone', 'modalPhone', ICONS.phone, p.phone ? maskPhone(p.phone) : "");
+
+    // Clicking the email opens Gmail's compose view directly (in a new
+    // tab), addressed to this person, rather than just showing plain text.
+    const gmailComposeUrl = p.email
+      ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(p.email)}`
+      : null;
+    fillInfoRow('rowEmail', 'modalEmail', ICONS.mail, p.email || "", gmailComposeUrl);
+
+    const addressText = p.presentAddress
+      ? `${p.presentAddress}${p.permanentAddress && p.permanentAddress !== p.presentAddress ? ` (Permanent: ${p.permanentAddress})` : ""}`
+      : (p.permanentAddress ? p.permanentAddress : "");
+    fillInfoRow('rowAddress', 'modalAddress', ICONS.pin, addressText);
+
+    const yearsWorked = hist.length;
+    document.querySelector('.modal-body h4').textContent =
+      `Full history — ${yearsWorked} year${yearsWorked > 1 ? 's' : ''}`;
+
+    // Group-colored accent for each timeline card — reuses the site's
+    // existing teal/gold/violet brand palette so Secretariat, Organizing
+    // Secretary, and Volunteers & Mentors entries are visually distinct
+    // at a glance, without needing separate icons per row.
+    const GROUP_ACCENT = {
+      coordinators: ['var(--teal)', 'var(--teal-soft)'],
+      core_team: ['var(--gold)', 'var(--gold-soft)'],
+      volunteers: ['var(--violet)', 'var(--violet-soft)']
+    };
+
+    document.getElementById('modalTimeline').innerHTML = hist.map((h, i) => {
+      const [accent, accentSoft] = GROUP_ACCENT[h.group] || GROUP_ACCENT.coordinators;
+      return `
+      <div class="t-item${i===0 ? ' current' : ''}">
+        <div class="t-card" style="--t-accent:${accent};--t-accent-soft:${accentSoft};">
+          <span class="t-year-badge">${h.year}</span>
+          <div class="t-card-text">
+            <p class="t-role">${h.role}</p>
+            <p class="t-group">${GROUP_LABELS[h.group]}</p>
+          </div>
+        </div>
+      </div>
+    `;
+    }).join("");
+
+    document.getElementById('downloadIdCardBtn').onclick = () => openIdCardWindow(p, hist[0]);
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Opens a print-ready ID card (front + back) for one person in a new
+  // window/tab, styled with the site's brand palette. Uses plain <img>
+  // tags rather than a canvas — canvas-based PNG export would silently
+  // break for any photo whose host (Google Drive, in our case) doesn't
+  // send permissive CORS headers, since reading pixel data from a
+  // cross-origin image taints the canvas. Printing/"Save as PDF" via the
+  // browser works reliably for every photo regardless of that, since
+  // displaying an image never requires CORS — only extracting its pixels
+  // does.
+  function openIdCardWindow(p, currentEntry){
+    const GROUP_ACCENT = {
+      coordinators: ['#0E8074', '#0A5F56'],
+      core_team: ['#C08A2E', '#8f6720'],
+      volunteers: ['#6F63B8', '#4f4586']
+    };
+    const [accent, accentDark] = GROUP_ACCENT[currentEntry.group] || GROUP_ACCENT.coordinators;
+    const idNumber = `SPSB-${p.id.replace(/[^a-zA-Z0-9]/g, '').slice(-6).toUpperCase()}`;
+
+    // This card is for official/internal identification use, so the full
+    // phone number is shown here — unlike the on-site profile card, which
+    // deliberately masks the last 3 digits for public display.
+    const fields = [
+      ["Institution", p.institution || "—"],
+      ["Department", p.department || "—"],
+      ["Phone", p.phone || "—"],
+      ["Email", p.email || "—"],
+      ["Present Address", p.presentAddress || "—"],
+      ["Permanent Address", p.permanentAddress || "—"],
+      ["Years Active", p.history.map(h=>h.year).sort((a,b)=>a-b).join(", ")]
+    ];
+
+    const win = window.open('', '_blank');
+    if(!win) return; // popup blocked — nothing more we can do client-side
+    win.document.write(`<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>${p.name} — ID Card</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@500;600;700;800&display=swap');
+  *{ box-sizing: border-box; }
+  body{ margin:0; padding:32px; background:#EDEFEC; font-family:'Manrope',sans-serif; display:flex; flex-direction:column; align-items:center; gap:20px; }
+  .toolbar{ display:flex; gap:10px; }
+  .toolbar button{ padding:10px 18px; border-radius:10px; border:none; background:${accent}; color:#fff; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
+  .card{ width:340px; border-radius:10px; overflow:hidden; box-shadow:0 16px 36px rgba(0,0,0,0.18); background:#fff; border:1px solid #e2e2e2; }
+
+  /* Standard header bar — org name only, no decoration */
+  .org-bar{ background:${accentDark}; color:#fff; text-align:center; font-size:11px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; padding:9px 0; }
+
+  /* Standard ID layout: rectangular photo left, name/role/ID right */
+  .id-block{ display:flex; gap:16px; align-items:flex-start; padding:20px 20px 16px; border-bottom:2px solid ${accent}; }
+  .photo{ width:88px; height:108px; object-fit:cover; border:1px solid #ddd; border-radius:4px; flex-shrink:0; background:#eee; }
+  .id-text{ min-width:0; padding-top:2px; }
+  .id-text .name{ font-family:'Fraunces',serif; font-weight:700; font-size:17px; color:#1a2530; margin:0 0 5px; line-height:1.25; }
+  .id-text .role{ display:inline-block; background:${accent}18; color:${accentDark}; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:3px 10px; border-radius:4px; margin-bottom:6px; }
+  .id-text .id-num{ font-size:11px; color:#777; font-weight:700; letter-spacing:0.04em; margin:2px 0 0; }
+  .id-text .id-num span{ color:#333; }
+
+  /* Standard bordered field table with alternating row shading */
+  table{ width:100%; border-collapse:collapse; }
+  td{ padding:9px 20px; font-size:11.5px; vertical-align:top; }
+  tr:nth-child(even){ background:#F7F7F5; }
+  td.label{ width:120px; font-weight:800; color:#666; text-transform:uppercase; font-size:9.5px; letter-spacing:0.05em; }
+  td.value{ color:#222; word-break:break-word; }
+
+  .footer{ text-align:center; font-size:9.5px; color:#999; padding:12px 20px 18px; border-top:1px solid #eee; margin-top:4px; line-height:1.5; }
+
+  @media print{
+    body{ background:#fff; padding:0; }
+    .toolbar{ display:none; }
+    .card{ box-shadow:none; border:1px solid #ccc; }
+  }
+</style></head>
+<body>
+  <div class="toolbar"><button onclick="window.print()">Print / Save as PDF</button></div>
+  <div class="card">
+    <div class="org-bar">BDJSO &middot; SPSB &middot; Official Member ID</div>
+    <div class="id-block">
+      <img class="photo" src="${p.photo}" alt="${p.name}">
+      <div class="id-text">
+        <p class="name">${p.name}</p>
+        <span class="role">${currentEntry.role}</span>
+        <p class="id-num">ID No. <span>${idNumber}</span></p>
+        <p class="id-num">Year: <span>${currentEntry.year}</span></p>
+      </div>
+    </div>
+    <table>
+      ${fields.map(([label, value]) => `<tr><td class="label">${label}</td><td class="value">${value}</td></tr>`).join("")}
+    </table>
+    <div class="footer">This ID card is issued by BDJSO / SPSB and reflects this member's official record as of ${currentEntry.year}.</div>
+  </div>
+</body></html>`);
+    win.document.close();
+  }
+
+  function closeModal(){
+    const overlay = document.getElementById('modalOverlay');
+    if(!overlay) return;
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Runs setup once the page's HTML actually exists — protects against
+  // tools that insert this script before the HTML tab's markup loads.
+  function init(){
+    const overlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    if(!overlay || !modalClose || !document.getElementById('yearTabs')){
+      // HTML not in the DOM yet — try again shortly instead of failing silently.
+      setTimeout(init, 50);
+      return;
+    }
+    modalClose.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if(e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+    const coverImg = document.getElementById('coverImg');
+    if(coverImg){
+      let coverIndex = 0;
+      coverImg.src = COVER_PHOTOS[coverIndex];
+      setInterval(() => {
+        coverIndex = (coverIndex + 1) % COVER_PHOTOS.length;
+        coverImg.style.opacity = '0';
+        setTimeout(() => {
+          coverImg.src = COVER_PHOTOS[coverIndex];
+          coverImg.style.opacity = '1';
+        }, 300); // matches half the CSS fade duration, so the swap happens mid-fade
+      }, 5000);
+    }
+    renderTabs();
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+</script>
+
+</body>
+</html>
